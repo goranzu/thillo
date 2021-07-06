@@ -1,1 +1,12 @@
+export const primary = "#D85577";
+export const secondary = "#E66E4E";
+export const textDark = "#444444";
+export const textLight = "#FFF";
+export const backgroundColor = "#F6F6F6";
+export const linkColor = "#604AE9";
+export const lightGray = "#E4E4E4";
+export const accent_100 = "#F17051";
+export const accent_200 = "#05D9B1";
 export const danger = "red";
+export const darkGray = "#D0D0D0";
+export const gray_100 = "#EFEFEF";
