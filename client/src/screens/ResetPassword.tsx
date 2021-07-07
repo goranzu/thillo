@@ -1,6 +1,8 @@
 /** @jsxImportSource @emotion/react */
 
-import { Link, useParams } from "react-router-dom";
+import React from "react";
+import { useParams, Link } from "react-router-dom";
+import VisuallyHidden from "@reach/visually-hidden";
 import FormGroup from "../components/styled/FormGroup";
 import Label from "../components/styled/Label";
 import InputStyled from "../components/styled/Input.styled";
@@ -8,6 +10,11 @@ import Fieldset from "../components/styled/Fieldset";
 import * as colors from "../styles/colors";
 import { useResetPassword } from "../hooks/authHooks";
 import { formatError, showError } from "../utils";
+import AuthLayout from "../components/AuthLayout";
+import imageUrl from "../images/signin.png";
+import AuthFormHeader from "../components/AuthFormHeader";
+import ButtonStyled from "../components/styled/Button.styled";
+import { ReactComponent as BackIcon } from "../images/icons/left-circle.svg";
 
 function ResetPassword() {
   const resetPasswordMutation = useResetPassword();
@@ -15,30 +22,36 @@ function ResetPassword() {
 
   const errors = formatError(resetPasswordMutation.error);
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      password: { value: string };
+    };
+
+    const password = target.password.value;
+
+    if (!password || !token) {
+      return;
+    }
+
+    resetPasswordMutation.mutate({ password, token });
+  }
+
   return (
-    <main>
-      <Link to="/">back</Link>
-      <h1>Reset Password</h1>
-      <form
-        css={{ maxWidth: "500px" }}
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const target = e.target as typeof e.target & {
-            password: { value: string };
-          };
-
-          const password = target.password.value;
-
-          if (!password || !token) {
-            return;
-          }
-
-          resetPasswordMutation.mutate({ password, token });
-        }}
+    <>
+      <Link css={{ position: "absolute", top: "3%", right: "5%" }} to="/signin">
+        <VisuallyHidden>To signin page</VisuallyHidden>
+        <BackIcon css={{ color: colors.textDark }} aria-hidden />
+      </Link>
+      <AuthLayout
+        handleSubmit={handleSubmit}
+        backgroundColor={colors.accent_200}
+        imageUrl={imageUrl}
       >
+        <AuthFormHeader text="Reset Password" />
         <Fieldset disabled={resetPasswordMutation.isLoading}>
           <FormGroup>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">New Password</Label>
             <InputStyled
               required
               isError={
@@ -61,10 +74,10 @@ function ResetPassword() {
             )}
           </FormGroup>
 
-          <button type="submit">Reset password</button>
+          <ButtonStyled type="submit">Reset password</ButtonStyled>
         </Fieldset>
-      </form>
-    </main>
+      </AuthLayout>
+    </>
   );
 }
 
