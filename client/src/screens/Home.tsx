@@ -67,19 +67,85 @@ function Home() {
           maxWidth: styleVariables.pageWidth,
           marginLeft: "auto",
           marginRight: "auto",
+          [mq.mq_400]: {
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "1em",
+            marginTop: "200px",
+            alignItems: "start",
+          },
         }}
       >
-        <div>
-          <h1>Thullo helps your team get work done faster.</h1>
-          <p>
+        <div
+          css={{
+            textAlign: "center",
+            marginTop: styleVariables.globalFlow,
+            "> *": { marginTop: "1.2em" },
+            [mq.mq_100]: {
+              textAlign: "left",
+              maxWidth: "650px",
+            },
+            [mq.mq_400]: {
+              textAlign: "left",
+              maxWidth: "650px",
+              gridColumn: "1 / 3",
+              marginTop: 0,
+            },
+          }}
+        >
+          <h1
+            css={{
+              fontSize: "var(--fs-800)",
+              fontWeight: 700,
+              [mq.mq_100]: {
+                maxWidth: "600px",
+              },
+              [mq.mq_400]: {
+                marginTop: "0 !important",
+              },
+            }}
+          >
+            Thillo helps your team get work done faster.
+          </h1>
+          <p
+            css={{
+              maxWidth: "90%",
+              marginLeft: "auto",
+              marginRight: "auto",
+              [mq.mq_100]: {
+                marginLeft: "unset",
+              },
+            }}
+          >
             An platform for teams of all sizes and locations. Bring your team
             together to design, build and deliver your project with a tool that
             works with you and your team, and adapts when you need to.
           </p>
-          <ButtonLink to="/signup">Get Started</ButtonLink>
+          <ButtonLink
+            css={{ paddingLeft: "2em", paddingRight: "2em" }}
+            to="/signup"
+          >
+            Get Started
+          </ButtonLink>
         </div>
 
-        <div>
+        <div
+          css={{
+            marginTop: styleVariables.globalFlow,
+            marginLeft: "auto",
+            marginRight: "auto",
+            maxWidth: "545px",
+            [mq.mq_300]: {
+              marginRight: "unset",
+              marginTop: "-3rem",
+            },
+            [mq.mq_400]: {
+              gridColumn: "3 / -1",
+              marginLeft: "unset",
+              marginTop: "unset",
+            },
+          }}
+        >
           <Illustration />
         </div>
       </main>
