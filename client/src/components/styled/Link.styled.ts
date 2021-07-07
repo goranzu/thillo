@@ -1,24 +1,21 @@
-import styled from "@emotion/styled";
-import * as colors from "../../styles/colors";
+import styled from "@emotion/styled/macro";
+import isPropValid from "@emotion/is-prop-valid";
 import { Link } from "react-router-dom";
-import { globalButtonStyles } from "../../styles/button";
+import * as colors from "../../styles/colors";
 
-const buttonStyles = {
-  outline: {
-    backgroundColor: "transparent",
-    color: colors.textDark,
-  },
-};
-
-const ButtonLink = styled(Link)<{ variant?: "outline" }>(
+const LinkStyled = styled(Link, {
+  shouldForwardProp: (prop) => isPropValid(prop),
+})<{ isLoading?: Boolean }>(
   {
-    ...globalButtonStyles,
-    display: "inline-block",
     textDecoration: "none",
+    color: colors.linkColor,
   },
   (props) => {
-    return props.variant ? buttonStyles[props.variant] : null;
+    return {
+      pointerEvents: props.isLoading && "none",
+      opacity: props.isLoading && "0.5",
+    };
   },
 );
 
-export default ButtonLink;
+export default LinkStyled;

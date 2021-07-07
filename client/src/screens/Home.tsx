@@ -4,7 +4,7 @@ import * as styleVariables from "../styles/variables";
 import * as mq from "../styles/mq";
 import { ReactComponent as Logo } from "../images/logo.svg";
 import { ReactComponent as Illustration } from "../images/landing-page-illustration.svg";
-import ButtonLink from "../components/styled/Link.styled";
+import ButtonLink from "../components/styled/ButtonLink.styled";
 
 const nav = [
   {

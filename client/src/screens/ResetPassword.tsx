@@ -3,7 +3,7 @@
 import { Link, useParams } from "react-router-dom";
 import FormGroup from "../components/styled/FormGroup";
 import Label from "../components/styled/Label";
-import Input from "../components/styled/Input";
+import InputStyled from "../components/styled/Input.styled";
 import Fieldset from "../components/styled/Fieldset";
 import * as colors from "../styles/colors";
 import { useResetPassword } from "../hooks/authHooks";
@@ -39,9 +39,9 @@ function ResetPassword() {
         <Fieldset disabled={resetPasswordMutation.isLoading}>
           <FormGroup>
             <Label htmlFor="password">Password</Label>
-            <Input
+            <InputStyled
               required
-              error={
+              isError={
                 showError(resetPasswordMutation.isError, errors, "password")[0]
               }
               type="password"

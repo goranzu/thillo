@@ -3,7 +3,7 @@
 import { Link } from "react-router-dom";
 import FormGroup from "../components/styled/FormGroup";
 import Label from "../components/styled/Label";
-import Input from "../components/styled/Input";
+import InputStyled from "../components/styled/Input.styled";
 import Fieldset from "../components/styled/Fieldset";
 import * as colors from "../styles/colors";
 import { useForgotPassword } from "../hooks/authHooks";
@@ -38,9 +38,9 @@ function ForgotPassword() {
         <Fieldset disabled={forgotPasswordMutation.isLoading}>
           <FormGroup>
             <Label htmlFor="email">Email</Label>
-            <Input
+            <InputStyled
               required
-              error={
+              isError={
                 showError(forgotPasswordMutation.isError, errors, "email")[0]
               }
               type="email"
