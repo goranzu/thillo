@@ -13,6 +13,7 @@ import signinImage from "../images/signin.png";
 import ButtonStyled from "../components/styled/Button.styled";
 import AuthFormHeader from "../components/AuthFormHeader";
 import LinkStyled from "../components/styled/Link.styled";
+import FormErrorMessage from "../components/styled/FormErrorMessage.styled";
 
 function Signin() {
   const signinMutation = useSignin();
@@ -54,9 +55,7 @@ function Signin() {
             id="email"
           />
           {"email" in errors && (
-            <small css={{ fontSize: ".75rem", color: colors.danger }}>
-              {errors["email"]}
-            </small>
+            <FormErrorMessage>{errors["email"]}</FormErrorMessage>
           )}
         </FormGroup>
         <FormGroup>
@@ -72,9 +71,7 @@ function Signin() {
             id="password"
           />
           {"password" in errors && (
-            <small css={{ fontSize: ".75rem", color: colors.danger }}>
-              {errors["password"]}
-            </small>
+            <FormErrorMessage>{errors["password"]}</FormErrorMessage>
           )}
         </FormGroup>
         <ButtonStyled variant="auth" type="submit">
@@ -82,7 +79,7 @@ function Signin() {
         </ButtonStyled>
         <p css={{ fontSize: "var(--fs-300)" }}>
           Don't have an account yet?{" "}
-          <LinkStyled to="/signin" isLoading={signinMutation.isLoading}>
+          <LinkStyled to="/signup" isLoading={signinMutation.isLoading}>
             Sign Up.
           </LinkStyled>
         </p>

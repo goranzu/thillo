@@ -13,6 +13,7 @@ import LinkStyled from "../components/styled/Link.styled";
 import AuthLayout from "../components/AuthLayout";
 import AuthFormHeader from "../components/AuthFormHeader";
 import { formatError } from "../utils";
+import FormErrorMessage from "../components/styled/FormErrorMessage.styled";
 
 function Signup() {
   const signupMutation = useSignup();
@@ -51,9 +52,7 @@ function Signup() {
             id="email"
           />
           {"email" in errors && (
-            <small css={{ fontSize: ".75rem", color: colors.danger }}>
-              {errors["email"]}
-            </small>
+            <FormErrorMessage>{errors["email"]}</FormErrorMessage>
           )}
         </FormGroup>
         <FormGroup>
@@ -67,9 +66,7 @@ function Signup() {
           />
 
           {"password" in errors && (
-            <small css={{ fontSize: ".75rem", color: colors.danger }}>
-              {errors["password"]}
-            </small>
+            <FormErrorMessage>{errors["password"]}</FormErrorMessage>
           )}
         </FormGroup>
         <ButtonStyled variant="auth" type="submit">

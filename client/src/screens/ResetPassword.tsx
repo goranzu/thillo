@@ -15,6 +15,7 @@ import imageUrl from "../images/signin.png";
 import AuthFormHeader from "../components/AuthFormHeader";
 import ButtonStyled from "../components/styled/Button.styled";
 import { ReactComponent as BackIcon } from "../images/icons/left-circle.svg";
+import FormErrorMessage from "../components/styled/FormErrorMessage.styled";
 
 function ResetPassword() {
   const resetPasswordMutation = useResetPassword();
@@ -60,9 +61,7 @@ function ResetPassword() {
               id="password"
             />
             {"password" in errors && (
-              <small css={{ fontSize: ".75rem", color: colors.danger }}>
-                {errors["password"]}
-              </small>
+              <FormErrorMessage>{errors["password"]}</FormErrorMessage>
             )}
           </FormGroup>
 
