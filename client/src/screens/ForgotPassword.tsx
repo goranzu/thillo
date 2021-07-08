@@ -7,7 +7,7 @@ import InputStyled from "../components/styled/Input.styled";
 import Fieldset from "../components/styled/Fieldset";
 import * as colors from "../styles/colors";
 import { useForgotPassword } from "../hooks/authHooks";
-import { formatError, showError } from "../utils";
+import { formatError } from "../utils";
 import AuthLayout from "../components/AuthLayout";
 import AuthFormHeader from "../components/AuthFormHeader";
 import signinImage from "../images/signin.png";
@@ -45,16 +45,14 @@ function ForgotPassword() {
           <Label htmlFor="email">Email</Label>
           <InputStyled
             required
-            isError={
-              showError(forgotPasswordMutation.isError, errors, "email")[0]
-            }
+            isError={"email" in errors}
             type="email"
             name="email"
             id="email"
           />
-          {showError(forgotPasswordMutation.isError, errors, "email") && (
+          {"email" in errors && (
             <small css={{ fontSize: ".75rem", color: colors.danger }}>
-              {showError(forgotPasswordMutation.isError, errors, "email")[1]}
+              {errors["email"]}
             </small>
           )}
         </FormGroup>

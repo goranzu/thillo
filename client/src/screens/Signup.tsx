@@ -7,12 +7,12 @@ import InputStyled from "../components/styled/Input.styled";
 import Fieldset from "../components/styled/Fieldset";
 import * as colors from "../styles/colors";
 import { useSignup } from "../hooks/authHooks";
-import { formatError, showError } from "../utils";
 import signupImage from "../images/signup.png";
 import ButtonStyled from "../components/styled/Button.styled";
 import LinkStyled from "../components/styled/Link.styled";
 import AuthLayout from "../components/AuthLayout";
 import AuthFormHeader from "../components/AuthFormHeader";
+import { formatError } from "../utils";
 
 function Signup() {
   const signupMutation = useSignup();
@@ -45,14 +45,14 @@ function Signup() {
           <Label htmlFor="email">Email</Label>
           <InputStyled
             required
-            isError={showError(signupMutation.isError, errors, "email")[0]}
+            isError={"email" in errors}
             type="email"
             name="email"
             id="email"
           />
-          {showError(signupMutation.isError, errors, "email") && (
+          {"email" in errors && (
             <small css={{ fontSize: ".75rem", color: colors.danger }}>
-              {showError(signupMutation.isError, errors, "email")[1]}
+              {errors["email"]}
             </small>
           )}
         </FormGroup>
@@ -60,14 +60,15 @@ function Signup() {
           <Label htmlFor="password">Password</Label>
           <InputStyled
             required
-            isError={showError(signupMutation.isError, errors, "password")[0]}
+            isError={"password" in errors}
             type="password"
             name="password"
             id="password"
           />
-          {showError(signupMutation.isError, errors, "password") && (
+
+          {"password" in errors && (
             <small css={{ fontSize: ".75rem", color: colors.danger }}>
-              {showError(signupMutation.isError, errors, "password")[1]}
+              {errors["password"]}
             </small>
           )}
         </FormGroup>

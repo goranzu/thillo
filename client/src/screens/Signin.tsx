@@ -7,7 +7,7 @@ import InputSyled from "../components/styled/Input.styled";
 import Fieldset from "../components/styled/Fieldset";
 import * as colors from "../styles/colors";
 import { useSignin } from "../hooks/authHooks";
-import { formatError, showError } from "../utils";
+import { formatError } from "../utils";
 import AuthLayout from "../components/AuthLayout";
 import signinImage from "../images/signin.png";
 import ButtonStyled from "../components/styled/Button.styled";
@@ -48,14 +48,14 @@ function Signin() {
           <Label htmlFor="email">Email</Label>
           <InputSyled
             required
-            isError={showError(signinMutation.isError, errors, "email")[0]}
+            isError={"email" in errors}
             type="email"
             name="email"
             id="email"
           />
-          {showError(signinMutation.isError, errors, "email") && (
+          {"email" in errors && (
             <small css={{ fontSize: ".75rem", color: colors.danger }}>
-              {showError(signinMutation.isError, errors, "email")[1]}
+              {errors["email"]}
             </small>
           )}
         </FormGroup>
@@ -66,14 +66,14 @@ function Signin() {
           </div>
           <InputSyled
             required
-            isError={showError(signinMutation.isError, errors, "password")[0]}
+            isError={"password" in errors}
             type="password"
             name="password"
             id="password"
           />
-          {showError(signinMutation.isError, errors, "password") && (
+          {"password" in errors && (
             <small css={{ fontSize: ".75rem", color: colors.danger }}>
-              {showError(signinMutation.isError, errors, "password")[1]}
+              {errors["password"]}
             </small>
           )}
         </FormGroup>

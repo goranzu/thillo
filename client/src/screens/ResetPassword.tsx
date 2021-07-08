@@ -9,7 +9,7 @@ import InputStyled from "../components/styled/Input.styled";
 import Fieldset from "../components/styled/Fieldset";
 import * as colors from "../styles/colors";
 import { useResetPassword } from "../hooks/authHooks";
-import { formatError, showError } from "../utils";
+import { formatError } from "../utils";
 import AuthLayout from "../components/AuthLayout";
 import imageUrl from "../images/signin.png";
 import AuthFormHeader from "../components/AuthFormHeader";
@@ -54,22 +54,14 @@ function ResetPassword() {
             <Label htmlFor="password">New Password</Label>
             <InputStyled
               required
-              isError={
-                showError(resetPasswordMutation.isError, errors, "password")[0]
-              }
+              isError={"password" in errors}
               type="password"
               name="password"
               id="password"
             />
-            {showError(resetPasswordMutation.isError, errors, "password") && (
+            {"password" in errors && (
               <small css={{ fontSize: ".75rem", color: colors.danger }}>
-                {
-                  showError(
-                    resetPasswordMutation.isError,
-                    errors,
-                    "password",
-                  )[1]
-                }
+                {errors["password"]}
               </small>
             )}
           </FormGroup>
