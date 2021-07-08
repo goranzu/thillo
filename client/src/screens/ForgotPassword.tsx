@@ -17,7 +17,7 @@ import FormErrorMessage from "../components/styled/FormErrorMessage.styled";
 function ForgotPassword() {
   const forgotPasswordMutation = useForgotPassword();
 
-  const errors = formatError(forgotPasswordMutation.error);
+  const errors = formatError<{ email?: string }>(forgotPasswordMutation.error);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,13 +46,13 @@ function ForgotPassword() {
           <Label htmlFor="email">Email</Label>
           <InputStyled
             required
-            isError={"email" in errors}
+            isError={Boolean(errors.email)}
             type="email"
             name="email"
             id="email"
           />
-          {"email" in errors && (
-            <FormErrorMessage>{errors["email"]}</FormErrorMessage>
+          {Boolean(errors.email) && (
+            <FormErrorMessage>{errors.email}</FormErrorMessage>
           )}
         </FormGroup>
 

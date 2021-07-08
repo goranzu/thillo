@@ -21,7 +21,9 @@ function ResetPassword() {
   const resetPasswordMutation = useResetPassword();
   const { token } = useParams<{ token: string }>();
 
-  const errors = formatError(resetPasswordMutation.error);
+  const errors = formatError<{ password?: string }>(
+    resetPasswordMutation.error,
+  );
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -55,13 +57,13 @@ function ResetPassword() {
             <Label htmlFor="password">New Password</Label>
             <InputStyled
               required
-              isError={"password" in errors}
+              isError={Boolean(errors.password)}
               type="password"
               name="password"
               id="password"
             />
-            {"password" in errors && (
-              <FormErrorMessage>{errors["password"]}</FormErrorMessage>
+            {Boolean(errors.password) && (
+              <FormErrorMessage>{errors.password}</FormErrorMessage>
             )}
           </FormGroup>
 

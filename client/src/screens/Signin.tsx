@@ -18,7 +18,9 @@ import FormErrorMessage from "../components/styled/FormErrorMessage.styled";
 function Signin() {
   const signinMutation = useSignin();
 
-  const errors = formatError(signinMutation.error);
+  const errors = formatError<{ email?: string; password?: string }>(
+    signinMutation.error,
+  );
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -49,13 +51,13 @@ function Signin() {
           <Label htmlFor="email">Email</Label>
           <InputSyled
             required
-            isError={"email" in errors}
+            isError={Boolean(errors.email)}
             type="email"
             name="email"
             id="email"
           />
-          {"email" in errors && (
-            <FormErrorMessage>{errors["email"]}</FormErrorMessage>
+          {Boolean(errors.email) && (
+            <FormErrorMessage>{errors.email}</FormErrorMessage>
           )}
         </FormGroup>
         <FormGroup>
@@ -65,13 +67,13 @@ function Signin() {
           </div>
           <InputSyled
             required
-            isError={"password" in errors}
+            isError={Boolean(errors.password)}
             type="password"
             name="password"
             id="password"
           />
-          {"password" in errors && (
-            <FormErrorMessage>{errors["password"]}</FormErrorMessage>
+          {Boolean(errors.password) && (
+            <FormErrorMessage>{errors.password}</FormErrorMessage>
           )}
         </FormGroup>
         <ButtonStyled variant="auth" type="submit">
