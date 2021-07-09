@@ -12,9 +12,23 @@ generator client {
 
 model User {
     id           Int      @id @default(autoincrement())
+    firstName    String
+    lastName     String
     email        String   @unique
     password     String
     passwordSalt Bytes
+    boards       Board[]
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
+}
+
+model Board {
+    id          Int      @id @default(autoincrement())
+    name        String
+    isPrivate   Boolean  @default(false)
+    description String?
+    creator     User     @relation(fields: [creatorId], references: [id])
+    creatorId   Int
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }
