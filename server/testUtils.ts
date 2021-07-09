@@ -1,9 +1,14 @@
 import faker from "faker";
 import { hashPassword } from "./src/utils/password";
 
-function buildUser(overrides?: Record<string, any>): {
+interface User {
   email: string;
   password: string;
+  firstName: string;
+  lastName: string;
+}
+
+function buildUser(overrides?: Record<string, any>): User & {
   createdAt: Date;
   updatedAt: Date;
   id: number;
@@ -12,6 +17,8 @@ function buildUser(overrides?: Record<string, any>): {
   return {
     id: 1,
     email: faker.internet.email(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
     password,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -21,27 +28,28 @@ function buildUser(overrides?: Record<string, any>): {
 
 async function buildUserWithHashedPassword(
   overrides?: Record<string, any>,
-): Promise<{
-  email: string;
-  password: string;
-  passwordSalt: Buffer;
-}> {
+): Promise<
+  User & {
+    passwordSalt: Buffer;
+  }
+> {
   const { hashedPassword, passwordSalt } = await hashPassword("password");
   return {
     email: faker.internet.email(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
     password: hashedPassword,
     passwordSalt,
     ...overrides,
   };
 }
 
-function buildAuthUser(overrides?: Record<string, any>): {
-  email: string;
-  password: string;
-} {
+function buildAuthUser(overrides?: Record<string, any>): User {
   return {
     email: faker.internet.email(),
     password: faker.internet.password(),
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
     ...overrides,
   };
 }
