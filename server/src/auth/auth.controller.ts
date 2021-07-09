@@ -1,18 +1,18 @@
-import { Controller } from "../types";
+import { Controller, SignupInterface } from "../types";
 import * as userService from "../resources/user/user.service";
 import appConfig from "../config";
-
-interface SignupInterface {
-  email: string;
-  password: string;
-}
 
 interface SigninInterface extends SignupInterface {}
 
 const httpSignup: Controller<SignupInterface> = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, firstName, lastName } = req.body;
 
-  const user = await userService.signUp(email, password);
+  const user = await userService.signUp({
+    email,
+    password,
+    firstName,
+    lastName,
+  });
 
   res.status(200).json({ data: user });
   return;
@@ -27,6 +27,7 @@ const httpSignin: Controller<SigninInterface> = async (req, res) => {
   req.session.user = {
     id: user.id,
     email: user.email,
+    name: user.name,
   };
 
   res.status(200).json({ data: user });

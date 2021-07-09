@@ -9,6 +9,8 @@ const router = express.Router();
 
 router.post(
   "/signup",
+  body("firstName").isString(),
+  body("lastName").isString(),
   body("email").isEmail().normalizeEmail(),
   body("password").isLength({ min: 4 }),
   validationMiddleware.requestValidation,

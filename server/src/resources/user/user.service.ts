@@ -1,6 +1,7 @@
 import cuid from "cuid";
 import prisma from "../../client";
 import appConfig from "../../config";
+import { SignupInterface } from "../../types";
 import { BadUserInputError } from "../../utils/errors";
 import { hashPassword, verifyPassword } from "../../utils/password";
 import prefixes from "../../utils/prefixes";
@@ -10,20 +11,28 @@ import { sendEmail } from "../../utils/sendEmail";
 interface UserInterface {
   id: number;
   email: string;
+  name: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-async function signUp(email: string, password: string): Promise<UserInterface> {
-  const { hashedPassword, passwordSalt } = await hashPassword(password);
+async function signUp(data: SignupInterface): Promise<UserInterface> {
+  const { hashedPassword, passwordSalt } = await hashPassword(data.password);
 
   const user = await prisma.user.create({
-    data: { email, password: hashedPassword, passwordSalt },
+    data: {
+      email: data.email,
+      password: hashedPassword,
+      passwordSalt,
+      firstName: data.firstName,
+      lastName: data.lastName,
+    },
   });
 
   return {
     id: user.id,
     email: user.email,
+    name: `${user.firstName} ${user.lastName}`,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
@@ -49,6 +58,7 @@ async function signIn(email: string, password: string): Promise<UserInterface> {
   return {
     id: user.id,
     email: user.email,
+    name: `${user.firstName} ${user.lastName}`,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };

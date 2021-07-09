@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 type User = {
   id: number;
   email: string;
+  name: string;
 };
 
 declare module "express-session" {
@@ -31,3 +32,10 @@ export type Middleware = (
   res: Response,
   next: NextFunction,
 ) => void;
+
+export interface SignupInterface {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
