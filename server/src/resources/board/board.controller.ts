@@ -35,4 +35,37 @@ const httpGetOne: Controller<Record<string, never>> = async (req, res) => {
   return;
 };
 
-export { httpGetAll, httpCreateOne, httpGetOne };
+export interface UpdateBoardBody {
+  name?: string;
+  description?: string;
+  isPrivate?: boolean;
+}
+
+const httpUpdateOne: Controller<UpdateBoardBody> = async (req, res) => {
+  const { id } = req.user;
+  const { boardId } = req.params;
+  const { name, description, isPrivate } = req.body;
+
+  const board = await boardService.updateOne({
+    boardId: Number(boardId),
+    userId: id,
+    name,
+    description,
+    isPrivate,
+  });
+
+  res.status(200).json({ data: board });
+  return;
+};
+
+const httpDeleteOne: Controller<Record<string, never>> = async (req, res) => {
+  const { boardId } = req.params;
+  const { id } = req.user;
+
+  await boardService.deleteOne(Number(boardId), id);
+
+  res.status(204).end();
+  return;
+};
+
+export { httpGetAll, httpCreateOne, httpGetOne, httpUpdateOne, httpDeleteOne };

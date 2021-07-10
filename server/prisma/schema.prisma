@@ -33,4 +33,5 @@ model Board {
     updatedAt   DateTime @updatedAt
 
     @@unique([name, creatorId])
+    @@unique([id, creatorId])
 }

@@ -18,6 +18,18 @@ router
 
 router
   .route(`/:${param}`)
-  .get(validationMiddleware.checkIdParam(param), boardController.httpGetOne);
+  .get(validationMiddleware.checkIdParam(param), boardController.httpGetOne)
+  .put(
+    validationMiddleware.checkIdParam(param),
+    body("name").isString().escape().optional(),
+    body("description").isString().escape().optional(),
+    body("isPrivate").isBoolean({ strict: true }).optional(),
+    validationMiddleware.requestValidation,
+    boardController.httpUpdateOne,
+  )
+  .delete(
+    validationMiddleware.checkIdParam(param),
+    boardController.httpDeleteOne,
+  );
 
 export default router;
