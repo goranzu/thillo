@@ -17,9 +17,10 @@ model User {
     email        String   @unique
     password     String
     passwordSalt Bytes
-    boards       Board[]
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
+    boards       Board[]
+    lists        List[]
 }
 
 model Board {
@@ -31,7 +32,22 @@ model Board {
     creatorId   Int
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+    lists List[]
 
     @@unique([name, creatorId])
     @@unique([id, creatorId])
+}
+
+model List {
+    id          Int      @id @default(autoincrement())
+    name        String
+    description String?
+    board       Board    @relation(fields: [boardId], references: [id])
+    creator     User     @relation(fields: [creatorId], references: [id])
+    boardId     Int
+    creatorId   Int
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@unique([name, boardId])
 }

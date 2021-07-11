@@ -39,6 +39,9 @@ async function getOne(userId: number, boardId: number): Promise<Board | null> {
       id: boardId,
       creatorId: userId,
     },
+    include: {
+      lists: true,
+    },
   });
 
   return board;

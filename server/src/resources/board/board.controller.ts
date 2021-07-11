@@ -1,6 +1,7 @@
 import { Controller } from "../../types";
 import { NotFoundError } from "../../utils/errors";
 import * as boardService from "./board.service";
+import * as listService from "../list/list.service";
 
 const httpGetAll: Controller<Record<string, never>> = async (req, res) => {
   const { id } = req.user;
@@ -18,6 +19,9 @@ const httpCreateOne: Controller<{ name: string; description?: string }> =
       name,
       userId: id,
     });
+
+    await listService.createDefaultLists(board.id, id);
+
     res.status(200).json({ data: board });
     return;
   };
