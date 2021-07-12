@@ -1,5 +1,4 @@
 import { Controller } from "../../types";
-import { NotFoundError } from "../../utils/errors";
 import * as boardService from "./board.service";
 import * as listService from "../list/list.service";
 
@@ -69,4 +68,21 @@ const httpDeleteOne: Controller<Record<string, never>> = async (req, res) => {
   return;
 };
 
-export { httpGetAll, httpCreateOne, httpGetOne, httpUpdateOne, httpDeleteOne };
+const httpGetList: Controller<Record<string, unknown>> = async (req, res) => {
+  const { boardId, listId } = req.params;
+  const { id } = req.user;
+
+  const list = await listService.getOne(Number(listId), id, Number(boardId));
+
+  res.status(200).json({ data: list });
+  return;
+};
+
+export {
+  httpGetAll,
+  httpCreateOne,
+  httpGetOne,
+  httpUpdateOne,
+  httpDeleteOne,
+  httpGetList,
+};

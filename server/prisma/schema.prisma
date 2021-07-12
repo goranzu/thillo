@@ -22,6 +22,8 @@ model User {
     boards       Board[]
     lists        List[]
     memberOf     BoardMembers[]
+    comments     CardComments[]
+    cards        Card[]
 }
 
 model Board {
@@ -48,6 +50,7 @@ model List {
     creator     User     @relation(fields: [creatorId], references: [id])
     boardId     Int
     creatorId   Int
+    cards       Card[]
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
@@ -63,4 +66,40 @@ model BoardMembers {
     updatedAt DateTime @updatedAt
 
     @@id([memberId, boardId])
+}
+
+model Card {
+    id          Int              @id @default(autoincrement())
+    title       String
+    description String?
+    coverUrl    String?
+    list        List             @relation(fields: [listId], references: [id])
+    listId      Int
+    creator     User             @relation(fields: [creatorId], references: [id])
+    creatorId   Int
+    createdAt   DateTime         @default(now())
+    updatedAt   DateTime         @updatedAt
+    comments    CardComments[]
+    attachments CardAttachment[]
+}
+
+model CardComments {
+    author    User     @relation(fields: [authorId], references: [id])
+    authorId  Int
+    card      Card     @relation(fields: [cardId], references: [id])
+    cardId    Int
+    text      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@id([authorId, cardId])
+}
+
+model CardAttachment {
+    id        Int      @id @default(autoincrement())
+    url       String
+    card      Card     @relation(fields: [cardId], references: [id])
+    cardId    Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }

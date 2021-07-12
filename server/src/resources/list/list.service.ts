@@ -1,5 +1,6 @@
 import { List } from "@prisma/client";
 import prisma from "../../client";
+import { NotFoundError } from "../../utils/errors";
 
 interface DefaultListItem {
   name: string;
@@ -34,38 +35,36 @@ async function createDefaultLists(
   return;
 }
 
-async function getAllListsFromUser(userId: number): Promise<List[]> {
-  const lists = await prisma.list.findMany({ where: { creatorId: userId } });
-  return lists;
-}
-
-async function createList(data: DefaultListItem): Promise<List> {
-  const list = await prisma.list.create({ data });
-  return list;
-}
-
-async function getOne(listId: number, userId: number): Promise<List | any> {
-  //   const list = await prisma.list.findUnique({ where: { id: listId } });
-  const list = await prisma.board.findFirst({
+async function getOne(
+  listId: number,
+  userId: number,
+  boardId: number,
+): Promise<List> {
+  // Finds the list only if the logged in user is a member of the board
+  const list = await prisma.list.findFirst({
     where: {
-      members: {
-        some: {
-          memberId: userId,
-        },
-      },
+      id: listId,
       AND: {
-        lists: {
-          some: {
-            id: listId,
+        boardId,
+        AND: {
+          board: {
+            members: {
+              some: {
+                memberId: userId,
+                boardId,
+              },
+            },
           },
         },
       },
     },
-    include: {
-      lists: true,
-    },
   });
+
+  if (list == null) {
+    throw new NotFoundError("List not found.");
+  }
+
   return list;
 }
 
-export { createDefaultLists, getAllListsFromUser, createList, getOne };
+export { createDefaultLists, getOne };

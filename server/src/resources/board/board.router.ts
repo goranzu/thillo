@@ -4,7 +4,8 @@ import * as boardController from "./board.controller";
 import * as validationMiddleware from "../../middleware/validation.middleware";
 
 const router = express.Router();
-const param = "boardId";
+const boardId = "boardId";
+const listId = "listId";
 
 router
   .route("/")
@@ -17,10 +18,10 @@ router
   );
 
 router
-  .route(`/:${param}`)
-  .get(validationMiddleware.checkIdParam(param), boardController.httpGetOne)
+  .route(`/:${boardId}`)
+  .get(validationMiddleware.checkIdParam(boardId), boardController.httpGetOne)
   .put(
-    validationMiddleware.checkIdParam(param),
+    validationMiddleware.checkIdParam(boardId),
     body("name").isString().escape().optional(),
     body("description").isString().escape().optional(),
     body("isPrivate").isBoolean({ strict: true }).optional(),
@@ -28,8 +29,16 @@ router
     boardController.httpUpdateOne,
   )
   .delete(
-    validationMiddleware.checkIdParam(param),
+    validationMiddleware.checkIdParam(boardId),
     boardController.httpDeleteOne,
+  );
+
+router
+  .route(`/:${boardId}/lists/:${listId}`)
+  .get(
+    validationMiddleware.checkIdParam(boardId),
+    validationMiddleware.checkIdParam(listId),
+    boardController.httpGetList,
   );
 
 export default router;
