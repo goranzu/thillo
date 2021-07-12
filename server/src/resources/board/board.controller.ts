@@ -29,11 +29,8 @@ const httpCreateOne: Controller<{ name: string; description?: string }> =
 const httpGetOne: Controller<Record<string, never>> = async (req, res) => {
   const { id } = req.user;
   const { boardId } = req.params;
-  const board = await boardService.getOne(id, Number(boardId));
 
-  if (board == null) {
-    throw new NotFoundError("Board not found.");
-  }
+  const board = await boardService.getOne(id, Number(boardId));
 
   res.status(200).json({ data: board });
   return;

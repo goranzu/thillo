@@ -1,6 +1,18 @@
 import { Board } from "@prisma/client";
 import prisma from "../../client";
+import { NotFoundError } from "../../utils/errors";
 import { UpdateBoardBody } from "./board.controller";
+
+interface Member {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+interface CustomBoard extends Board {
+  members: Member[];
+}
 
 async function getAll(userId: number): Promise<Board[]> {
   const boards = await prisma.board.findMany({
@@ -27,13 +39,21 @@ async function createOne({
       name,
       description,
       creatorId: userId,
+      members: {
+        create: {
+          memberId: userId,
+        },
+      },
     },
   });
 
   return board;
 }
 
-async function getOne(userId: number, boardId: number): Promise<Board | null> {
+async function getOne(
+  userId: number,
+  boardId: number,
+): Promise<CustomBoard | null> {
   const board = await prisma.board.findFirst({
     where: {
       id: boardId,
@@ -41,10 +61,28 @@ async function getOne(userId: number, boardId: number): Promise<Board | null> {
     },
     include: {
       lists: true,
+      members: {
+        include: {
+          member: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      },
     },
   });
 
-  return board;
+  if (board == null) {
+    throw new NotFoundError("Board not found.");
+  }
+
+  const members = board.members.map((board) => board.member);
+
+  return { ...board, members };
 }
 
 interface Update extends UpdateBoardBody {
