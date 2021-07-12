@@ -50,14 +50,20 @@ async function createOne({
   return board;
 }
 
-async function getOne(
-  userId: number,
-  boardId: number,
-): Promise<CustomBoard | null> {
+async function getOne(userId: number, boardId: number): Promise<CustomBoard> {
+  //   Finds board if logged in user is the creator or a member
   const board = await prisma.board.findFirst({
     where: {
       id: boardId,
       creatorId: userId,
+      OR: {
+        id: boardId,
+        members: {
+          some: {
+            memberId: userId,
+          },
+        },
+      },
     },
     include: {
       lists: true,
