@@ -27,7 +27,7 @@ const httpSignin: Controller<SigninInterface> = async (req, res) => {
   req.session.user = {
     id: user.id,
     email: user.email,
-    name: user.name,
+    name: `${user.firstName} ${user.lastName}`,
   };
 
   res.status(200).json({ data: user });

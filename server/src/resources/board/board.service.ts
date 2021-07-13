@@ -2,6 +2,7 @@ import { Board } from "@prisma/client";
 import prisma from "../../client";
 import { NotFoundError } from "../../utils/errors";
 import { UpdateBoardBody } from "./board.controller";
+import * as userService from "../user/user.service";
 
 interface Member {
   id: number;
@@ -131,4 +132,31 @@ async function deleteOne(boardId: number, userId: number): Promise<void> {
   });
 }
 
-export { getAll, createOne, getOne, updateOne, deleteOne };
+async function addMember(boardId: number, email: string, userId: number) {
+  const newMember = await userService.findByEmail(email);
+
+  if (newMember == null) {
+    throw new NotFoundError("User not found.");
+  }
+
+  //   The logged in user is able to add members to a board only if this user als is the creator of the board
+  const board = await prisma.board.update({
+    where: {
+      id_creatorId: {
+        id: boardId,
+        creatorId: userId,
+      },
+    },
+    data: {
+      members: {
+        create: {
+          memberId: newMember.id,
+        },
+      },
+    },
+  });
+
+  return board;
+}
+
+export { getAll, createOne, getOne, updateOne, deleteOne, addMember };

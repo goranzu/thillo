@@ -78,6 +78,17 @@ const httpGetList: Controller<Record<string, unknown>> = async (req, res) => {
   return;
 };
 
+const httpAddMember: Controller<{ email: string }> = async (req, res) => {
+  const { boardId } = req.params;
+  const { id } = req.user;
+  const { email } = req.body;
+
+  const board = await boardService.addMember(Number(boardId), email, id);
+
+  res.status(200).json({ data: board });
+  return;
+};
+
 export {
   httpGetAll,
   httpCreateOne,
@@ -85,4 +96,5 @@ export {
   httpUpdateOne,
   httpDeleteOne,
   httpGetList,
+  httpAddMember,
 };

@@ -41,4 +41,13 @@ router
     boardController.httpGetList,
   );
 
+router
+  .route(`/:${boardId}/members`)
+  .post(
+    body("email").isEmail().normalizeEmail(),
+    validationMiddleware.requestValidation,
+    validationMiddleware.checkIdParam(boardId),
+    boardController.httpAddMember,
+  );
+
 export default router;

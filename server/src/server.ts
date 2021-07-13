@@ -8,6 +8,7 @@ import cors from "cors";
 import appConfig from "./config";
 import authRouter from "./auth/auth.router";
 import boardRouter from "./resources/board/board.router";
+import userRouter from "./resources/user/user.router";
 import * as authMiddleware from "./middleware/auth.middleware";
 import errorHandler from "./errorHandler";
 import { NotFoundError } from "./utils/errors";
@@ -51,6 +52,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRouter);
 app.use("/api", authMiddleware.protect);
 app.use("/api/boards", boardRouter);
+app.use("/api/users", userRouter);
 
 app.use(function handle404Erorr() {
   throw new NotFoundError(undefined);

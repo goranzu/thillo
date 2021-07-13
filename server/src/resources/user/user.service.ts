@@ -11,10 +11,20 @@ import { sendEmail } from "../../utils/sendEmail";
 interface UserInterface {
   id: number;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   createdAt: Date;
   updatedAt: Date;
 }
+
+const defaultSelect = {
+  id: true,
+  email: true,
+  firstName: true,
+  lastName: true,
+  createdAt: true,
+  updatedAt: true,
+};
 
 async function signUp(data: SignupInterface): Promise<UserInterface> {
   const { hashedPassword, passwordSalt } = await hashPassword(data.password);
@@ -32,7 +42,8 @@ async function signUp(data: SignupInterface): Promise<UserInterface> {
   return {
     id: user.id,
     email: user.email,
-    name: `${user.firstName} ${user.lastName}`,
+    firstName: user.firstName,
+    lastName: user.lastName,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
@@ -58,7 +69,8 @@ async function signIn(email: string, password: string): Promise<UserInterface> {
   return {
     id: user.id,
     email: user.email,
-    name: `${user.firstName} ${user.lastName}`,
+    firstName: user.firstName,
+    lastName: user.lastName,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
@@ -108,4 +120,30 @@ async function resetPassword(password: string, token: string): Promise<void> {
   return;
 }
 
-export { signUp, signIn, forgotPassword, resetPassword };
+async function findByEmail(email: string): Promise<UserInterface | null> {
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { ...defaultSelect },
+  });
+
+  if (user) {
+    return user;
+  } else {
+    return null;
+  }
+}
+
+async function getAllUsers(): Promise<UserInterface[]> {
+  const users = await prisma.user.findMany({ select: { ...defaultSelect } });
+
+  return users;
+}
+
+export {
+  signUp,
+  signIn,
+  forgotPassword,
+  resetPassword,
+  findByEmail,
+  getAllUsers,
+};
