@@ -159,4 +159,36 @@ async function addMember(boardId: number, email: string, userId: number) {
   return board;
 }
 
-export { getAll, createOne, getOne, updateOne, deleteOne, addMember };
+async function removeMember(boardId: number, userId: number, memberId: number) {
+  //   The logged in user is able to add members to a board only if this user als is the creator of the board
+  const board = await prisma.board.update({
+    where: {
+      id_creatorId: {
+        id: boardId,
+        creatorId: userId,
+      },
+    },
+    data: {
+      members: {
+        delete: {
+          memberId_boardId: {
+            boardId,
+            memberId,
+          },
+        },
+      },
+    },
+  });
+
+  return board;
+}
+
+export {
+  getAll,
+  createOne,
+  getOne,
+  updateOne,
+  deleteOne,
+  addMember,
+  removeMember,
+};

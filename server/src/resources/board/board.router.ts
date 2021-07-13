@@ -6,6 +6,7 @@ import * as validationMiddleware from "../../middleware/validation.middleware";
 const router = express.Router();
 const boardId = "boardId";
 const listId = "listId";
+const memberId = "memberId";
 
 router
   .route("/")
@@ -48,6 +49,14 @@ router
     validationMiddleware.requestValidation,
     validationMiddleware.checkIdParam(boardId),
     boardController.httpAddMember,
+  );
+
+router
+  .route(`/:${boardId}/members/:${memberId}`)
+  .delete(
+    validationMiddleware.checkIdParam(boardId),
+    validationMiddleware.checkIdParam(memberId),
+    boardController.httpRemoveMember,
   );
 
 export default router;

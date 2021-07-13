@@ -1,6 +1,7 @@
 import { Controller } from "../../types";
 import * as boardService from "./board.service";
 import * as listService from "../list/list.service";
+import { BadUserInputError } from "../../utils/errors";
 
 const httpGetAll: Controller<Record<string, never>> = async (req, res) => {
   const { id } = req.user;
@@ -89,6 +90,23 @@ const httpAddMember: Controller<{ email: string }> = async (req, res) => {
   return;
 };
 
+const httpRemoveMember: Controller<Record<string, unknown>> = async (
+  req,
+  res,
+) => {
+  const { boardId, memberId } = req.params;
+  const { id } = req.user;
+
+  if (id === Number(memberId)) {
+    throw new BadUserInputError();
+  }
+
+  await boardService.removeMember(Number(boardId), id, Number(memberId));
+
+  res.status(204).end();
+  return;
+};
+
 export {
   httpGetAll,
   httpCreateOne,
@@ -97,4 +115,5 @@ export {
   httpDeleteOne,
   httpGetList,
   httpAddMember,
+  httpRemoveMember,
 };
