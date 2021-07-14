@@ -4,6 +4,7 @@
   "description": "server",
   "main": "dist/index.js",
   "scripts": {
+    "debug": "export DEBUG=* && tsc && node dist/src/server.js --unhandled-rejections=strict",
     "start": "node dist/src/index.js --unhandled-rejections=strict",
     "watch": "tsc --watch",
     "dev": "nodemon dist/src/index.js --unhandled-rejections=strict",
@@ -20,6 +21,7 @@
     "@tsconfig/node14": "^1.0.1",
     "@types/connect-redis": "0.0.16",
     "@types/cors": "^2.8.10",
+    "@types/debug": "^4.1.6",
     "@types/express": "^4.17.12",
     "@types/express-session": "^1.17.3",
     "@types/faker": "^5.5.6",
@@ -51,6 +53,7 @@
     "connect-redis": "^6.0.0",
     "cors": "^2.8.5",
     "cuid": "^2.1.8",
+    "debug": "^4.3.2",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "express-session": "^1.17.2",
@@ -61,5 +64,8 @@
   },
   "prettier": {
     "trailingComma": "all"
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
   }
 }
