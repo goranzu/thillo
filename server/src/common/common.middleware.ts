@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import debug from "debug";
+import { UnauthorizedError } from "../utils/errors";
 
 type MiddlewareFunction = (
   req: Request,
@@ -24,6 +25,18 @@ class CommonMiddleware {
       res.status(400).json({ errors: errors.array() });
       return;
     }
+    next();
+  };
+
+  protect: MiddlewareFunction = (req, res, next) => {
+    const { user } = req.session;
+
+    if (user == null) {
+      throw new UnauthorizedError();
+    }
+
+    req.user = user;
+
     next();
   };
 }

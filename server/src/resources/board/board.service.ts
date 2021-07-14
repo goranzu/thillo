@@ -2,7 +2,8 @@ import { Board } from "@prisma/client";
 import prisma from "../../client";
 import { NotFoundError } from "../../utils/errors";
 import { UpdateBoardBody } from "./board.controller";
-import * as userService from "../user/user.service";
+// import * as userService from "../user/user.service";
+import userSevice from "../user/user.service";
 
 interface Member {
   id: number;
@@ -133,7 +134,7 @@ async function deleteOne(boardId: number, userId: number): Promise<void> {
 }
 
 async function addMember(boardId: number, email: string, userId: number) {
-  const newMember = await userService.findByEmail(email);
+  const newMember = await userSevice.findByEmail(email);
 
   if (newMember == null) {
     throw new NotFoundError("User not found.");

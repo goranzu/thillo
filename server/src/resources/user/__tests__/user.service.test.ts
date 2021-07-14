@@ -37,52 +37,52 @@
 //   expect(passwordUtils.hashPassword).toHaveBeenCalledWith(user.password);
 // });
 
-import * as userService from "../user.service";
-import * as mail from "../../../utils/sendEmail";
-import { buildUserWithHashedPassword } from "../../../../testUtils";
-import prisma from "../../../client";
-import redisClient from "../../../utils/redisClient";
-import { BadUserInputError } from "../../../utils/errors";
+// import * as userService from "../user.service";
+// import * as mail from "../../../utils/sendEmail";
+// import { buildUserWithHashedPassword } from "../../../../testUtils";
+// import prisma from "../../../client";
+// import redisClient from "../../../utils/redisClient";
+// import { BadUserInputError } from "../../../utils/errors";
 
-jest.mock("../../../utils/sendEmail");
+// jest.mock("../../../utils/sendEmail");
 
-const testEmail = "test@example.com";
-const testPassword = "password";
+// const testEmail = "test@example.com";
+// const testPassword = "password";
 
-beforeEach(async () => {
-  const testUser = await buildUserWithHashedPassword({
-    email: testEmail,
-  });
+// beforeEach(async () => {
+//   const testUser = await buildUserWithHashedPassword({
+//     email: testEmail,
+//   });
 
-  await prisma.user.createMany({ data: [testUser] });
-});
+//   await prisma.user.createMany({ data: [testUser] });
+// });
 
-afterEach(async () => {
-  const deleteUser = prisma.user.deleteMany();
+// afterEach(async () => {
+//   const deleteUser = prisma.user.deleteMany();
 
-  await prisma.$transaction([deleteUser]);
-});
+//   await prisma.$transaction([deleteUser]);
+// });
 
-afterAll(async () => {
-  await redisClient.quit();
+// afterAll(async () => {
+//   await redisClient.quit();
 
-  await prisma.$disconnect();
-});
+//   await prisma.$disconnect();
+// });
 
-test("should call sendEmail", async () => {
-  await userService.forgotPassword(testEmail);
+// test("should call sendEmail", async () => {
+//   await userService.forgotPassword(testEmail);
 
-  expect(mail.sendEmail).toHaveBeenCalledTimes(1);
-});
+//   expect(mail.sendEmail).toHaveBeenCalledTimes(1);
+// });
 
-test("should throw a 401 unauthorized if email is not registerd", async () => {
-  expect.assertions(2);
-  try {
-    await userService.forgotPassword("wrong@email.com");
-  } catch (error) {
-    expect(error).toBeInstanceOf(BadUserInputError);
-    expect(error.message).toMatchInlineSnapshot(
-      `"This email is not registered."`,
-    );
-  }
-});
+// test("should throw a 401 unauthorized if email is not registerd", async () => {
+//   expect.assertions(2);
+//   try {
+//     await userService.forgotPassword("wrong@email.com");
+//   } catch (error) {
+//     expect(error).toBeInstanceOf(BadUserInputError);
+//     expect(error.message).toMatchInlineSnapshot(
+//       `"This email is not registered."`,
+//     );
+//   }
+// });

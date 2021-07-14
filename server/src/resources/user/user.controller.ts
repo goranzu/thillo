@@ -1,12 +1,12 @@
 import { Controller } from "../../types";
 import { NotFoundError } from "../../utils/errors";
-import * as userService from "./user.service";
+import userService from "./user.service";
 
 const httpGetAllUsers: Controller<Record<string, unknown>> = async (
   req,
   res,
 ) => {
-  const users = await userService.getAllUsers();
+  const users = await userService.listAllUsers();
 
   res.status(200).json({ data: users });
   return;

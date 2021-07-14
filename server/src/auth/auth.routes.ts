@@ -1,40 +1,11 @@
 import express from "express";
 import { CommonRoutesConfig } from "../common/common.routes.config";
-import { body, validationResult } from "express-validator";
-import { BadUserInputError } from "../utils/errors";
+import { body } from "express-validator";
 import commonMiddleware from "../common/common.middleware";
 import authController from "./auth.controller";
-import * as authMiddleware from "../middleware/auth.middleware";
 import debug from "debug";
 
 const logger = debug("app:auth.routes");
-
-// router.post(
-//     "/signin",
-//     body("email").isEmail().normalizeEmail(),
-//     body("password").isLength({ min: 4 }),
-//     validationMiddleware.requestValidation,
-//     authController.httpSignin,
-//   );
-
-//   router.get("/me", authMiddleware.protect, authController.httpGetMe);
-
-//   router.delete("/logout", authMiddleware.protect, authController.httpLogout);
-
-//   router.post(
-//     "/forgot-password",
-//     body("email").isEmail().normalizeEmail(),
-//     validationMiddleware.requestValidation,
-//     authController.httpForgotPassword,
-//   );
-
-//   router.post(
-//     "/reset-password",
-//     body("password").isLength({ min: 4 }),
-//     body("token").isString(),
-//     validationMiddleware.requestValidation,
-//     authController.httpResetPassword,
-//   );
 
 export class AuthRoutes extends CommonRoutesConfig {
   constructor(app: express.Application) {
@@ -64,9 +35,9 @@ export class AuthRoutes extends CommonRoutesConfig {
       authController.signUp,
     );
 
-    this.app.get("/me", authMiddleware.protect, authController.getMe);
+    this.app.get("/me", commonMiddleware.protect, authController.getMe);
 
-    this.app.delete("/logout", authMiddleware.protect, authController.logout);
+    this.app.delete("/logout", commonMiddleware.protect, authController.logout);
 
     this.app.post(
       "/forgot-password",
