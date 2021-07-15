@@ -26,7 +26,7 @@ class AuthController {
   };
 
   getMe: Controller = async (req, res) => {
-    const user = req.user;
+    const user = res.locals.user;
     res.status(200).json({ data: user });
     return;
   };

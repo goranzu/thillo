@@ -4,7 +4,7 @@ import userService from "./user.service";
 class UserController {
   findByEmail: Controller = async (req, res) => {
     const { email } = req.body;
-    if (email === req.user.email) {
+    if (email === res.locals.user.email) {
       res.status(204).end();
       return;
     }

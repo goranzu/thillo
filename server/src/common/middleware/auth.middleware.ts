@@ -9,7 +9,9 @@ class AuthMiddleware {
       throw new UnauthorizedError();
     }
 
-    req.user = user;
+    res.locals.user = user;
+
+    // req.user = user;
 
     next();
   };

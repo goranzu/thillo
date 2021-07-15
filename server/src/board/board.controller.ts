@@ -5,13 +5,13 @@ import boardService from "./board.service";
 
 class BoardController {
   list: Controller = async (req, res) => {
-    const boards = await boardService.listUsersBoards(req.user.id);
+    const boards = await boardService.listUsersBoards(res.locals.user.id);
     res.status(200).json({ data: boards });
   };
 
   createBoard: Controller = async (req, res) => {
     const { name, description } = req.body;
-    const creatorId = req.user.id;
+    const creatorId = res.locals.user.id;
     const boards = await boardService.create({ name, description, creatorId });
 
     res.status(200).json({ data: boards });
@@ -19,14 +19,14 @@ class BoardController {
 
   getById: Controller = async (req, res) => {
     const board = await boardService.findBoardIfMember(
-      req.user.id,
+      res.locals.user.id,
       req.body.boardId,
     );
     res.status(200).json({ data: board });
   };
 
   updateBoard: Controller = async (req, res) => {
-    const creatorId = req.user.id;
+    const creatorId = res.locals.user.id;
     const { boardId, name, description, isPrivate } = req.body;
     const board = await boardService.updateBoard({
       creatorId,
@@ -39,7 +39,7 @@ class BoardController {
   };
 
   deleteBoard: Controller = async (req, res) => {
-    const creatorId = req.user.id;
+    const creatorId = res.locals.user.id;
     const { boardId } = req.body;
     await boardService.deleteBoard(boardId, creatorId);
     res.status(204).end();
@@ -47,7 +47,7 @@ class BoardController {
 
   getListFromBoard: Controller = async (req, res) => {
     const { boardId, listId } = req.body;
-    const { id } = req.user;
+    const { id } = res.locals.user;
 
     const list = await listService.getList(listId, id, boardId);
 
@@ -56,7 +56,7 @@ class BoardController {
   };
 
   addMemberToBoard: Controller = async (req, res) => {
-    const { id } = req.user;
+    const { id } = res.locals.user;
     const { email, boardId } = req.body;
 
     const board = await boardService.addMemberToBoard(boardId, email, id);
@@ -67,7 +67,7 @@ class BoardController {
 
   removeMemberFromBoard: Controller = async (req, res) => {
     const { boardId, memberId } = req.body;
-    const { id } = req.user;
+    const { id } = res.locals.user;
 
     if (id === memberId) {
       throw new BadUserInputError();
