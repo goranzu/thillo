@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
-import commonMiddleware from "../common/common.middleware";
 import { CommonRoutesConfig } from "../common/common.routes.config";
+import validationMiddleware from "../common/middleware/validation.middleware";
 import userController from "./user.controller";
 
 export class UserRoutes extends CommonRoutesConfig {
@@ -13,7 +13,7 @@ export class UserRoutes extends CommonRoutesConfig {
     this.app.post(
       "/api/users/find",
       body("email").isEmail().normalizeEmail(),
-      commonMiddleware.validateRequest,
+      validationMiddleware.validateRequest,
       userController.findByEmail,
     );
 

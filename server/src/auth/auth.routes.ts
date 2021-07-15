@@ -1,8 +1,9 @@
 import express from "express";
 import { CommonRoutesConfig } from "../common/common.routes.config";
 import { body } from "express-validator";
-import commonMiddleware from "../common/common.middleware";
 import authController from "./auth.controller";
+import validationMiddleware from "../common/middleware/validation.middleware";
+import authMiddleware from "../common/middleware/auth.middleware";
 // import debug from "debug";
 
 // const logger = debug("app:auth.routes");
@@ -17,7 +18,7 @@ export class AuthRoutes extends CommonRoutesConfig {
       "/signin",
       body("email").isEmail().normalizeEmail(),
       body("password").isLength({ min: 4 }),
-      commonMiddleware.validateRequest,
+      validationMiddleware.validateRequest,
       authController.signIn,
     );
 
@@ -27,18 +28,18 @@ export class AuthRoutes extends CommonRoutesConfig {
       body("lastName").isString(),
       body("email").isEmail().normalizeEmail(),
       body("password").isLength({ min: 4 }),
-      commonMiddleware.validateRequest,
+      validationMiddleware.validateRequest,
       authController.signUp,
     );
 
-    this.app.get("/me", commonMiddleware.protect, authController.getMe);
+    this.app.get("/me", authMiddleware.protect, authController.getMe);
 
-    this.app.delete("/logout", commonMiddleware.protect, authController.logout);
+    this.app.delete("/logout", authMiddleware.protect, authController.logout);
 
     this.app.post(
       "/forgot-password",
       body("email").isEmail().normalizeEmail(),
-      commonMiddleware.validateRequest,
+      validationMiddleware.validateRequest,
       authController.forgotPassword,
     );
 
@@ -46,7 +47,7 @@ export class AuthRoutes extends CommonRoutesConfig {
       "/reset-password",
       body("password").isLength({ min: 4 }),
       body("token").isString(),
-      commonMiddleware.validateRequest,
+      validationMiddleware.validateRequest,
       authController.resetPassword,
     );
 

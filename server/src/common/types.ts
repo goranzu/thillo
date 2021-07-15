@@ -20,7 +20,7 @@ declare module "express-serve-static-core" {
   }
 }
 
-export type Middleware = (
+export type MiddlewareFunction = (
   req: Request,
   res: Response,
   next: NextFunction,

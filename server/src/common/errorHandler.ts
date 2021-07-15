@@ -1,7 +1,7 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { NextFunction, Request, Response } from "express";
 
-import appConfig from "./config";
+import appConfig from "../config";
 
 function errorHandler(
   err: Error & {

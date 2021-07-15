@@ -9,18 +9,14 @@ import cors from "cors";
 import debug from "debug";
 
 import appConfig from "./config";
-// import authRouter from "./auth/auth.router";
-// import boardRouter from "./resources/board/board.router";
-// import userRouter from "./resources/user/user.router";
-// import * as authMiddleware from "./middleware/auth.middleware";
-import errorHandler from "./errorHandler";
-import { NotFoundError } from "./utils/errors";
-import redisClient from "./utils/redisClient";
+import errorHandler from "./common/errorHandler";
+import { NotFoundError } from "./common/errors";
+import redisClient from "./common/redisClient";
 import { CommonRoutesConfig } from "./common/common.routes.config";
 import { AuthRoutes } from "./auth/auth.routes";
 import { UserRoutes } from "./user/user.routes";
 import { BoardRoutes } from "./board/board.routes";
-import commonMiddleware from "./common/common.middleware";
+import authMiddleware from "./common/middleware/auth.middleware";
 
 const app = express();
 const server = http.createServer(app);
@@ -62,12 +58,7 @@ app.get("/", (req, res) => {
   return;
 });
 
-// app.use("/auth", authRouter);
-// app.use("/api", authMiddleware.protect);
-// app.use("/api/boards", boardRouter);
-// app.use("/api/users", userRouter);
-
-app.use("/api", commonMiddleware.protect);
+app.use("/api", authMiddleware.protect);
 routes.push(new AuthRoutes(app));
 routes.push(new UserRoutes(app));
 routes.push(new BoardRoutes(app));
@@ -85,11 +76,4 @@ server.listen(appConfig.port, () => {
   });
 });
 
-// function start(): void {
-//   app.listen(appConfig.port, () => {
-//     console.log(`Listening on http://localhost:${appConfig.port}`);
-//   });
-// }
-
-// export { start, app };
 export { app };

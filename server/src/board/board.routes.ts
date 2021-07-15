@@ -1,8 +1,8 @@
 import express from "express";
 import { body } from "express-validator";
-import commonMiddleware from "../common/common.middleware";
 import { CommonRoutesConfig } from "../common/common.routes.config";
-import { BadUserInputError } from "../utils/errors";
+import validationMiddleware from "../common/middleware/validation.middleware";
+import { BadUserInputError } from "../common/errors";
 import boardController from "./board.controller";
 
 export class BoardRoutes extends CommonRoutesConfig {
@@ -17,7 +17,7 @@ export class BoardRoutes extends CommonRoutesConfig {
       .post(
         body("name").isString().escape(),
         body("description").isString().escape().optional(),
-        commonMiddleware.validateRequest,
+        validationMiddleware.validateRequest,
         boardController.createBoard,
       );
 
@@ -73,7 +73,7 @@ export class BoardRoutes extends CommonRoutesConfig {
         body("name").isString().escape().optional(),
         body("description").isString().escape().optional(),
         body("isPrivate").isBoolean({ strict: true }).optional(),
-        commonMiddleware.validateRequest,
+        validationMiddleware.validateRequest,
         boardController.updateBoard,
       )
       .delete(boardController.deleteBoard);
@@ -86,7 +86,7 @@ export class BoardRoutes extends CommonRoutesConfig {
       .route(`/api/boards/:boardId/members`)
       .post(
         body("email").isEmail().normalizeEmail(),
-        commonMiddleware.validateRequest,
+        validationMiddleware.validateRequest,
         boardController.addMemberToBoard,
       );
 
@@ -97,56 +97,3 @@ export class BoardRoutes extends CommonRoutesConfig {
     return this.app;
   }
 }
-
-// router
-//   .route("/")
-//   .get(boardController.httpGetAll)
-//   .post(
-//     body("name").isString().escape(),
-//     body("description").isString().escape().optional(),
-//     validationMiddleware.requestValidation,
-//     boardController.httpCreateOne,
-//   );
-
-// router
-//   .route(`/:${boardId}`)
-//   .get(validationMiddleware.checkIdParam(boardId), boardController.httpGetOne)
-//   .put(
-//     validationMiddleware.checkIdParam(boardId),
-//     body("name").isString().escape().optional(),
-//     body("description").isString().escape().optional(),
-//     body("isPrivate").isBoolean({ strict: true }).optional(),
-//     validationMiddleware.requestValidation,
-//     boardController.httpUpdateOne,
-//   )
-//   .delete(
-//     validationMiddleware.checkIdParam(boardId),
-//     boardController.httpDeleteOne,
-//   );
-
-// router
-//   .route(`/:${boardId}/lists/:${listId}`)
-//   .get(
-//     validationMiddleware.checkIdParam(boardId),
-//     validationMiddleware.checkIdParam(listId),
-//     boardController.httpGetList,
-//   );
-
-// router
-//   .route(`/:${boardId}/members`)
-//   .post(
-//     body("email").isEmail().normalizeEmail(),
-//     validationMiddleware.requestValidation,
-//     validationMiddleware.checkIdParam(boardId),
-//     boardController.httpAddMember,
-//   );
-
-// router
-//   .route(`/:${boardId}/members/:${memberId}`)
-//   .delete(
-//     validationMiddleware.checkIdParam(boardId),
-//     validationMiddleware.checkIdParam(memberId),
-//     boardController.httpRemoveMember,
-//   );
-
-// export default router;

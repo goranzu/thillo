@@ -1,4 +1,4 @@
-import prisma from "../client";
+import prisma from "../common/client";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
 
 class BoardDao {

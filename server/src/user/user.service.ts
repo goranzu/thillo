@@ -1,12 +1,12 @@
 import cuid from "cuid";
 import appConfig from "../config";
-import { BadUserInputError, NotFoundError } from "../utils/errors";
-import { hashPassword, verifyPassword } from "../utils/password";
-import prefixes from "../utils/prefixes";
-import redisClient from "../utils/redisClient";
-import { sendEmail } from "../utils/sendEmail";
+import { BadUserInputError, NotFoundError } from "../common/errors";
+import { hashPassword, verifyPassword } from "../common/password";
 import { CreateDto } from "./dto/create.dto";
 import userDao from "./user.dao";
+import prefixes from "../common/prefixes";
+import redisClient from "../common/redisClient";
+import emailService from "../common/services/email.service";
 
 class UserService {
   async signUp(data: CreateDto) {
@@ -62,7 +62,8 @@ class UserService {
       1000 * 60 * 60 * 3,
     );
 
-    await sendEmail(user.email, link);
+    await emailService.sendEmail(user.email, link);
+
     return;
   }
 

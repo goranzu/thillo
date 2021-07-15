@@ -1,5 +1,5 @@
 import faker from "faker";
-import { hashPassword } from "./src/utils/password";
+import { hashPassword } from "./src/common/password";
 
 interface User {
   email: string;
