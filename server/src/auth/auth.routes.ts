@@ -3,9 +3,9 @@ import { CommonRoutesConfig } from "../common/common.routes.config";
 import { body } from "express-validator";
 import commonMiddleware from "../common/common.middleware";
 import authController from "./auth.controller";
-import debug from "debug";
+// import debug from "debug";
 
-const logger = debug("app:auth.routes");
+// const logger = debug("app:auth.routes");
 
 export class AuthRoutes extends CommonRoutesConfig {
   constructor(app: express.Application) {
@@ -15,10 +15,6 @@ export class AuthRoutes extends CommonRoutesConfig {
   configureRoutes(): express.Application {
     this.app.post(
       "/signin",
-      (req, res, next) => {
-        logger(req.body);
-        next();
-      },
       body("email").isEmail().normalizeEmail(),
       body("password").isLength({ min: 4 }),
       commonMiddleware.validateRequest,

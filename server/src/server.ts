@@ -18,6 +18,9 @@ import { NotFoundError } from "./utils/errors";
 import redisClient from "./utils/redisClient";
 import { CommonRoutesConfig } from "./common/common.routes.config";
 import { AuthRoutes } from "./auth/auth.routes";
+import { UserRoutes } from "./user/user.routes";
+import { BoardRoutes } from "./board/board.routes";
+import commonMiddleware from "./common/common.middleware";
 
 const app = express();
 const server = http.createServer(app);
@@ -64,7 +67,10 @@ app.get("/", (req, res) => {
 // app.use("/api/boards", boardRouter);
 // app.use("/api/users", userRouter);
 
+app.use("/api", commonMiddleware.protect);
 routes.push(new AuthRoutes(app));
+routes.push(new UserRoutes(app));
+routes.push(new BoardRoutes(app));
 
 app.use(function handle404Erorr() {
   throw new NotFoundError(undefined);

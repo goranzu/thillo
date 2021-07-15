@@ -1,4 +1,4 @@
-import { Middleware } from "../types";
+import { Middleware } from "../common/types";
 import { UnauthorizedError } from "../utils/errors";
 
 const protect: Middleware = (req, res, next) => {

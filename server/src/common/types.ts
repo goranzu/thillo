@@ -1,4 +1,6 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
+
+export type Controller = (req: Request, res: Response) => Promise<any>;
 
 type User = {
   id: number;
@@ -17,15 +19,6 @@ declare module "express-serve-static-core" {
     user: User;
   }
 }
-
-export interface CustomRequest<T> extends Request {
-  body: T;
-}
-
-export type Controller<T> = (
-  req: CustomRequest<T>,
-  res: Response,
-) => Promise<void>;
 
 export type Middleware = (
   req: Request,

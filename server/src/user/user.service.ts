@@ -1,10 +1,10 @@
 import cuid from "cuid";
-import appConfig from "../../config";
-import { BadUserInputError } from "../../utils/errors";
-import { hashPassword, verifyPassword } from "../../utils/password";
-import prefixes from "../../utils/prefixes";
-import redisClient from "../../utils/redisClient";
-import { sendEmail } from "../../utils/sendEmail";
+import appConfig from "../config";
+import { BadUserInputError, NotFoundError } from "../utils/errors";
+import { hashPassword, verifyPassword } from "../utils/password";
+import prefixes from "../utils/prefixes";
+import redisClient from "../utils/redisClient";
+import { sendEmail } from "../utils/sendEmail";
 import { CreateDto } from "./dto/create.dto";
 import userDao from "./user.dao";
 
@@ -89,6 +89,9 @@ class UserService {
 
   async findByEmail(email: string) {
     const user = await userDao.findByEmail(email);
+    if (user == null) {
+      throw new NotFoundError("User not found.");
+    }
     return user;
   }
 

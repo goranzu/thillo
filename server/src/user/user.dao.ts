@@ -1,4 +1,4 @@
-import prisma from "../../client";
+import prisma from "../client";
 import { CreateDto } from "./dto/create.dto";
 import { UpdateDto } from "./dto/update.dto";
 
