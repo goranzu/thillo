@@ -3,7 +3,7 @@ import { CommonRoutesConfig } from "../common/common.routes.config";
 import { body } from "express-validator";
 import authController from "./auth.controller";
 import validationMiddleware from "../common/middleware/validation.middleware";
-import authMiddleware from "../common/middleware/auth.middleware";
+import authMiddleware from "./auth.middleware";
 // import debug from "debug";
 
 // const logger = debug("app:auth.routes");

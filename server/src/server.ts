@@ -16,7 +16,7 @@ import { CommonRoutesConfig } from "./common/common.routes.config";
 import { AuthRoutes } from "./auth/auth.routes";
 import { UserRoutes } from "./user/user.routes";
 import { BoardRoutes } from "./board/board.routes";
-import authMiddleware from "./common/middleware/auth.middleware";
+import authMiddleware from "./auth/auth.middleware";
 
 const app = express();
 const server = http.createServer(app);
