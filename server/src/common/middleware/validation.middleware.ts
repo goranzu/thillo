@@ -1,4 +1,5 @@
 import { validationResult } from "express-validator";
+import { BadUserInputError } from "../errors";
 import { MiddlewareFunction } from "../types";
 
 class ValidationMiddleware {
@@ -16,6 +17,16 @@ class ValidationMiddleware {
       return;
     }
     next();
+  };
+
+  validateRequestParam = (paramName: string): MiddlewareFunction => {
+    return (req, res, next) => {
+      if (req.body[paramName] == null) {
+        throw new BadUserInputError(`Invalid ${paramName} param.`);
+      }
+
+      next();
+    };
   };
 }
 

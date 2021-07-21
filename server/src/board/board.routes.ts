@@ -2,8 +2,9 @@ import express from "express";
 import { body } from "express-validator";
 import { CommonRoutesConfig } from "../common/common.routes.config";
 import validationMiddleware from "../common/middleware/validation.middleware";
-import { BadUserInputError } from "../common/errors";
 import boardController from "./board.controller";
+import commonMiddleware from "../common/middleware/common.middleware";
+import { boardId, listId, memberId } from "../common/constants";
 
 export class BoardRoutes extends CommonRoutesConfig {
   constructor(app: express.Application) {
@@ -21,53 +22,15 @@ export class BoardRoutes extends CommonRoutesConfig {
         boardController.createBoard,
       );
 
-    this.app.param("boardId", (req, res, next) => {
-      const { boardId } = req.params;
-      try {
-        const boardIdToNumber = Number(boardId);
-        if (Number.isNaN(boardIdToNumber)) {
-          throw new BadUserInputError("Ivalid id", "boardId");
-        }
+    this.app.param(boardId, commonMiddleware.extractParamToBody(boardId));
 
-        req.body.boardId = boardIdToNumber;
-        next();
-      } catch (error) {
-        throw new BadUserInputError("Ivalid id", "boardId");
-      }
-    });
+    this.app.param(listId, commonMiddleware.extractParamToBody(listId));
 
-    this.app.param("listId", (req, res, next) => {
-      const { listId } = req.params;
-      try {
-        const listIdToNumber = Number(listId);
-        if (Number.isNaN(listIdToNumber)) {
-          throw new BadUserInputError("Ivalid id", "listId");
-        }
-
-        req.body.listId = listIdToNumber;
-        next();
-      } catch (error) {
-        throw new BadUserInputError("Ivalid id", "listId");
-      }
-    });
-
-    this.app.param("memberId", (req, res, next) => {
-      const { memberId } = req.params;
-      try {
-        const memberIdToNumber = Number(memberId);
-        if (Number.isNaN(memberIdToNumber)) {
-          throw new BadUserInputError("Ivalid id", "memberId");
-        }
-
-        req.body.memberId = memberIdToNumber;
-        next();
-      } catch (error) {
-        throw new BadUserInputError("Ivalid id", "memberId");
-      }
-    });
+    this.app.param(memberId, commonMiddleware.extractParamToBody(memberId));
 
     this.app
-      .route("/api/boards/:boardId")
+      .route(`/api/boards/:${boardId}`)
+      .all(validationMiddleware.validateRequestParam(boardId))
       .get(boardController.getById)
       .put(
         body("name").isString().escape().optional(),
@@ -79,11 +42,15 @@ export class BoardRoutes extends CommonRoutesConfig {
       .delete(boardController.deleteBoard);
 
     this.app
-      .route(`/api/boards/:boardId/lists/:listId`)
+      .route(`/api/boards/:${boardId}/lists/:${listId}`)
+      .all(
+        validationMiddleware.validateRequestParam(boardId),
+        validationMiddleware.validateRequestParam(listId),
+      )
       .get(boardController.getListFromBoard);
 
     this.app
-      .route(`/api/boards/:boardId/members`)
+      .route(`/api/boards/:${boardId}/members`)
       .post(
         body("email").isEmail().normalizeEmail(),
         validationMiddleware.validateRequest,
@@ -91,7 +58,11 @@ export class BoardRoutes extends CommonRoutesConfig {
       );
 
     this.app
-      .route(`/api/boards/:boardId/members/:memberId`)
+      .route(`/api/boards/:${boardId}/members/:${memberId}`)
+      .all(
+        validationMiddleware.validateRequestParam(boardId),
+        validationMiddleware.validateRequestParam(memberId),
+      )
       .delete(boardController.removeMemberFromBoard);
 
     return this.app;

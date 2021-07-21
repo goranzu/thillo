@@ -15,6 +15,12 @@ class AuthMiddleware {
 
     next();
   };
+
+  checkIfUserIsMemberOfBoard: MiddlewareFunction = (req, res, next) => {
+    const { boardId } = req.params;
+
+    next();
+  };
 }
 
 export default new AuthMiddleware();
