@@ -16,6 +16,7 @@ import { CommonRoutesConfig } from "./common/common.routes.config";
 import { AuthRoutes } from "./auth/auth.routes";
 import { UserRoutes } from "./user/user.routes";
 import { BoardRoutes } from "./board/board.routes";
+import ListRoutes from "./list/list.routes";
 import authMiddleware from "./auth/auth.middleware";
 
 const app = express();
@@ -62,6 +63,7 @@ app.use("/api", authMiddleware.protect);
 routes.push(new AuthRoutes(app));
 routes.push(new UserRoutes(app));
 routes.push(new BoardRoutes(app));
+routes.push(new ListRoutes(app));
 
 app.use(function handle404Erorr() {
   throw new NotFoundError(undefined);

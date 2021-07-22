@@ -1,4 +1,5 @@
 import { validationResult } from "express-validator";
+import appConfig from "../../config";
 import { BadUserInputError } from "../errors";
 import { MiddlewareFunction } from "../types";
 
