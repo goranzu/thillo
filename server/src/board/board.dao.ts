@@ -128,6 +128,20 @@ class BoardDao {
     });
     return board;
   }
+
+  async findMember(memberId: number, boardId: number) {
+    const member = await prisma.boardMembers.findUnique({
+      where: {
+        memberId_boardId: {
+          memberId,
+          boardId,
+        },
+      },
+      select: { memberId: true },
+    });
+
+    return member;
+  }
 }
 
 export default new BoardDao();

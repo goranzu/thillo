@@ -11,7 +11,8 @@
 
 ## Lists
 
-- [ ] CRUD on lists.
+- [x] CRUD on lists.
+    - Need to test
 
 ## Cards
 

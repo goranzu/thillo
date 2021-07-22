@@ -1,4 +1,4 @@
-import { NotFoundError } from "../common/errors";
+import { NotFoundError, UnauthorizedError } from "../common/errors";
 import listService from "../list/list.service";
 import userSevice from "../user/user.service";
 import boardDao from "./board.dao";
@@ -63,6 +63,16 @@ class BoardService {
     const board = await boardDao.removeMember(boardId, creatorId, memberId);
 
     return board;
+  }
+
+  async userIsMember(memberId: number, boardId: number) {
+    const isMember = await boardDao.findMember(memberId, boardId);
+
+    if (isMember == null) {
+      throw new UnauthorizedError();
+    } else {
+      return true;
+    }
   }
 }
 

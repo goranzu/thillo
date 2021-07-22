@@ -1,13 +1,26 @@
 import { Controller } from "../common/types";
-import listDao from "./list.dao";
+import listService from "./list.service";
 
 class ListController {
+  createList: Controller = async (req, res) => {
+    const { name, description, boardId } = req.body;
+    const creatorId = res.locals.user.id;
+    const list = await listService.createList({
+      name,
+      description,
+      boardId,
+      creatorId,
+    });
+
+    res.status(201).json({ data: list });
+    return;
+  };
+
   getListById: Controller = async (req, res) => {
     const memberId = res.locals.user.id;
-    const listId = +req.params.listId;
-    const boardId = +req.query.boardId!;
+    const { listId, boardId } = req.body;
 
-    const list = await listDao.find(listId, boardId, memberId);
+    const list = await listService.getList(listId, memberId, boardId);
 
     if (list == null) {
       res.status(404).end();
@@ -15,6 +28,32 @@ class ListController {
     }
 
     res.status(200).json({ data: list });
+    return;
+  };
+
+  updateList: Controller = async (req, res) => {
+    const memberId = res.locals.user.id;
+    const { name, description, listId, boardId } = req.body;
+
+    const list = await listService.updateList({
+      boardId,
+      listId,
+      description,
+      name,
+      memberId,
+    });
+
+    res.status(201).json({ data: list });
+    return;
+  };
+
+  deleteList: Controller = async (req, res) => {
+    const memberId = res.locals.user.id;
+    const { listId, boardId } = req.body;
+
+    await listService.deleteList(boardId, listId, memberId);
+
+    res.status(204).end();
     return;
   };
 }
