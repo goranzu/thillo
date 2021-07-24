@@ -49,7 +49,7 @@ class BoardController {
     const { boardId, listId } = req.body;
     const { id } = res.locals.user;
 
-    const list = await listService.getList(listId, id, boardId);
+    const list = await listService.getList({ listId, boardId, memberId: id });
 
     res.status(200).json({ data: list });
     return;

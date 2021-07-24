@@ -1,4 +1,5 @@
 import prisma from "../common/client";
+import { FindList } from "../common/types";
 import { CreateListDto, PatchListDto } from "./list.service";
 
 class ListDao {
@@ -40,12 +41,13 @@ class ListDao {
     await prisma.list.createMany({ data: defaultLists });
   }
 
-  async find(listId: number, boardId: number, memberId: number) {
+  async find({ listId, boardId = -1, memberId }: FindList) {
+    console.log("boardId", boardId);
     const list = await prisma.list.findFirst({
       where: {
         id: listId,
         AND: {
-          boardId,
+          boardId: 3,
           AND: {
             board: {
               members: {
@@ -82,10 +84,13 @@ class ListDao {
     return list;
   }
 
-  async delete(listId: number) {
+  async delete(listId: number, boardId: number) {
     await prisma.list.delete({
       where: {
-        id: listId,
+        id_boardId: {
+          id: listId,
+          boardId,
+        },
       },
     });
     return;

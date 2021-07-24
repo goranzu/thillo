@@ -1,5 +1,6 @@
 import boardService from "../board/board.service";
 import { NotFoundError } from "../common/errors";
+import { FindList } from "../common/types";
 import listDao from "./list.dao";
 
 export interface CreateListDto {
@@ -23,8 +24,8 @@ class ListService {
     return list;
   }
 
-  async getList(listId: number, memberId: number, boardId: number) {
-    const list = await listDao.find(listId, memberId, boardId);
+  async getList({ listId, boardId, memberId }: FindList) {
+    const list = await listDao.find({ listId, memberId, boardId });
 
     if (list == null) {
       throw new NotFoundError("List not found.");
@@ -64,8 +65,9 @@ class ListService {
   }
 
   async deleteList(boardId: number, listId: number, memberId: number) {
+    //   TODO this should throw
     await boardService.userIsMember(memberId, boardId);
-    await listDao.delete(listId);
+    await listDao.delete(listId, boardId);
     return true;
   }
 }

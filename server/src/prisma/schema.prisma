@@ -55,6 +55,7 @@ model List {
     updatedAt   DateTime @updatedAt
 
     @@unique([name, boardId])
+    @@unique([id, boardId])
 }
 
 model BoardMembers {

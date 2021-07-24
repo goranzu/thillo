@@ -68,6 +68,7 @@ class BoardService {
   async userIsMember(memberId: number, boardId: number) {
     const isMember = await boardDao.findMember(memberId, boardId);
 
+    //   TODO this should throw
     if (isMember == null) {
       throw new UnauthorizedError();
     } else {

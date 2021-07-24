@@ -41,14 +41,6 @@ export class BoardRoutes extends CommonRoutesConfig {
       )
       .delete(boardController.deleteBoard);
 
-    // this.app
-    //   .route(`/api/boards/:${boardId}/lists/:${listId}`)
-    //   .all(
-    //     validationMiddleware.validateRequestParam(boardId),
-    //     validationMiddleware.validateRequestParam(listId),
-    //   )
-    //   .get(boardController.getListFromBoard);
-
     this.app
       .route(`/api/boards/:${boardId}/members`)
       .post(

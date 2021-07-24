@@ -32,3 +32,9 @@ export interface SignupInterface {
   firstName: string;
   lastName: string;
 }
+
+export interface FindList {
+  listId: number;
+  boardId: number;
+  memberId: number;
+}

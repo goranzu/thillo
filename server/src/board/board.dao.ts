@@ -29,21 +29,26 @@ class BoardDao {
 
   async findBoardByMemberId(memberId: number, boardId: number) {
     //   Finds board if logged in user is the creator or a member
+    console.log({ memberId, boardId });
     const board = await prisma.board.findFirst({
       where: {
         id: boardId,
-        creatorId: memberId,
+        AND: {
+          creatorId: memberId,
+        },
         OR: {
           id: boardId,
-          members: {
-            some: {
-              memberId,
+          AND: {
+            members: {
+              some: {
+                memberId,
+              },
             },
           },
         },
       },
       include: {
-        lists: true,
+        lists: { orderBy: { createdAt: "asc" } },
         members: {
           include: {
             member: {
@@ -58,6 +63,41 @@ class BoardDao {
         },
       },
     });
+
+    console.log(board);
+    // const board = await prisma.board.findFirst({
+    //   where: {
+    //     id: boardId,
+    //     creatorId: memberId,
+    //     AND: {
+    //       id: boardId,
+    //       members: {
+    //         some: {
+    //           memberId,
+    //         },
+    //       },
+    //     },
+    //   },
+    //   include: {
+    //     lists: {
+    //       orderBy: {
+    //         createdAt: "asc",
+    //       },
+    //     },
+    //     members: {
+    //       include: {
+    //         member: {
+    //           select: {
+    //             id: true,
+    //             firstName: true,
+    //             lastName: true,
+    //             email: true,
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
 
     return board;
   }
