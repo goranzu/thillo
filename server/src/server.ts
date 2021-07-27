@@ -1,4 +1,4 @@
-import http from "http";
+// import http from "http";
 
 import express from "express";
 import "express-async-errors";
@@ -6,23 +6,24 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import morgan from "morgan";
 import cors from "cors";
-import debug from "debug";
+// import debug from "debug";
 
 import appConfig from "./config";
 import errorHandler from "./common/errorHandler";
 import { NotFoundError } from "./common/errors";
 import redisClient from "./common/redisClient";
-import { CommonRoutesConfig } from "./common/common.routes.config";
-import { AuthRoutes } from "./auth/auth.routes";
-import { UserRoutes } from "./user/user.routes";
-import { BoardRoutes } from "./board/board.routes";
-import ListRoutes from "./list/list.routes";
-import authMiddleware from "./auth/auth.middleware";
+import authRouter from "./auth/auth.routes";
+// import { CommonRoutesConfig } from "./common/common.routes.config";
+// import { AuthRoutes } from "./auth/auth.routes";
+// import { UserRoutes } from "./user/user.routes";
+// import { BoardRoutes } from "./board/board.routes";
+// import ListRoutes from "./list/list.routes";
+import * as authMiddleware from "./auth/auth.middleware";
 
 const app = express();
-const server = http.createServer(app);
-const routes: CommonRoutesConfig[] = [];
-const logger = debug("app");
+// const server = http.createServer(app);
+// const routes: CommonRoutesConfig[] = [];
+// const logger = debug("app");
 
 const RedisStore = connectRedis(session);
 
@@ -60,10 +61,11 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", authMiddleware.protect);
-routes.push(new AuthRoutes(app));
-routes.push(new UserRoutes(app));
-routes.push(new BoardRoutes(app));
-routes.push(new ListRoutes(app));
+app.use("/", authRouter);
+// routes.push(new AuthRoutes(app));
+// routes.push(new UserRoutes(app));
+// routes.push(new BoardRoutes(app));
+// routes.push(new ListRoutes(app));
 
 app.use(function handle404Erorr() {
   throw new NotFoundError(undefined);
@@ -71,11 +73,17 @@ app.use(function handle404Erorr() {
 
 app.use(errorHandler);
 
-server.listen(appConfig.port, () => {
-  routes.forEach((route) => {
-    logger(`Routes configured for ${route.getName}`);
+function start(): void {
+  app.listen(appConfig.port, () => {
     console.log(runningMessage);
   });
-});
+}
 
-export { app };
+// server.listen(appConfig.port, () => {
+//   routes.forEach((route) => {
+//     logger(`Routes configured for ${route.getName}`);
+//     console.log(runningMessage);
+//   });
+// });
+
+export { app, start };
