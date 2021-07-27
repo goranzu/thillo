@@ -13,6 +13,9 @@ import errorHandler from "./common/errorHandler";
 import { NotFoundError } from "./common/errors";
 import redisClient from "./common/redisClient";
 import authRouter from "./auth/auth.routes";
+import userRouter from "./user/user.routes";
+import boardRouter from "./board/board.routes";
+import listRouter from "./list/list.routes";
 // import { CommonRoutesConfig } from "./common/common.routes.config";
 // import { AuthRoutes } from "./auth/auth.routes";
 // import { UserRoutes } from "./user/user.routes";
@@ -60,8 +63,11 @@ app.get("/", (req, res) => {
   return;
 });
 
-app.use("/api", authMiddleware.protect);
 app.use("/", authRouter);
+app.use("/api", authMiddleware.protect);
+app.use("/api", userRouter);
+app.use("/api", boardRouter);
+app.use("/api", listRouter);
 // routes.push(new AuthRoutes(app));
 // routes.push(new UserRoutes(app));
 // routes.push(new BoardRoutes(app));

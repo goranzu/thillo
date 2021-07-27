@@ -2,7 +2,7 @@ import express from "express";
 import { body } from "express-validator";
 import * as authController from "./auth.controller";
 import * as authMiddleware from "./auth.middleware";
-import validationMiddleware from "../common/middleware/validation.middleware";
+import * as validationMiddleware from "../common/middleware/validation.middleware";
 // import debug from "debug";
 
 // const logger = debug("app:auth.routes");
