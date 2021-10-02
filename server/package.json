@@ -13,7 +13,8 @@
     "migrate:init": "prisma migrate dev --name init",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "test": "npm run docker:up && dotenv -e .env.test -- npm run migrate:init && dotenv -e .env.test -- jest -i --detectOpenHandles --watch"
+    "test": "npm run docker:up && dotenv -e .env.test -- npm run migrate:init && dotenv -e .env.test -- jest -i --detectOpenHandles --watch",
+    "migrate": "node-pg-migrate --envPath .env --tsconfig ./tsconfig.json"
   },
   "author": "Goran Tenic",
   "license": "ISC",
@@ -61,8 +62,10 @@
     "express-validator": "^6.12.0",
     "ioredis": "^4.27.6",
     "morgan": "^1.10.0",
+    "node-pg-migrate": "^6.0.0",
     "nodemailer": "^6.6.2",
-    "pg": "^8.7.1"
+    "pg": "^8.7.1",
+    "ts-node": "^10.2.1"
   },
   "prettier": {
     "trailingComma": "all"
