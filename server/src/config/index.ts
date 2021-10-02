@@ -1,5 +1,6 @@
 import "dotenv";
 import assert from "assert";
+import { PoolConfig } from "pg";
 
 const ENV = process.env.NODE_ENV || "development";
 
@@ -22,12 +23,12 @@ const appConfig = {
   frontend: "http://localhost:8080",
   //   redisPort: ENV === "test" ? 6380 : 6379,
   sql: {
-    PGDATABASE,
-    PGUSER,
-    PGHOST,
-    PGPASSWORD,
-    PGPORT,
-  },
+    database: PGDATABASE,
+    user: PGUSER,
+    host: PGHOST,
+    password: PGPASSWORD,
+    port: Number(PGPORT),
+  } as PoolConfig,
 } as const;
 
 export default appConfig;
