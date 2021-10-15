@@ -1,10 +1,10 @@
 # User Stories
 
-- [] User story: I can list of available boards
-- [] User story: I can add a new board with a cover photo, title and visibility options
-- [] User story: I can see a board with different columns, team members,... according to the design
-- [] User story: I can add a new list
-- [] User story: I can add a new card to the existing list
+- [] User story: I can see list of available boards
+- [] User story: I can create a new board with a cover photo, title and visibility options
+- [] User story: I can see a board with different lists, team members,... according to the design
+- [] User story: I can create a new list
+- [] User story: I can add a new card to a existing list
 - [] User story: I can set the visibility of the board
 - [] User story: I can add a member to the board (user must exist in the system)
 - [] User story: I can change the name of the board by selecting it
@@ -18,6 +18,26 @@
 - [] User story: When a card is selected, I can add a new comment. Given I am the author, I can edit and delete the comment.
 - [] User story: When a card is selected, I can change the card cover image by searching from Unsplash
 - [] User story: When a card is selected, I can add labels with given colors
+
+## Concepten
+
+- Lists
+- Boards
+- Users
+- Cards
+- Comments
+
+## Attributes
+
+- cover photo (board and card)
+- title
+- visible
+- members
+- name (board name, list name, card name)
+- description (board, card)
+- title
+- attachment (card)
+- labels
 
 ## Boards
 
