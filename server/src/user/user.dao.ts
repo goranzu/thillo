@@ -1,13 +1,30 @@
 import prisma from "../common/client";
+import { query } from "../db";
 import { CreateDto } from "./dto/create.dto";
 import { UpdateDto } from "./dto/update.dto";
 
 async function create(userData: CreateDto & { passwordSalt: Buffer }) {
-  const user = await prisma.user.create({
-    data: userData,
-    select: { id: true, firstName: true, lastName: true, email: true },
-  });
-  return user;
+  //   const user = await prisma.user.create({
+  //     data: userData,
+  //     select: { id: true, firstName: true, lastName: true, email: true },
+  //   });
+  //   return user;
+  const res = await query(
+    `
+        INSERT INTO users ("email", "firstName", "lastName", "password", "passwordSalt")
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING "id", "email";
+        `,
+    [
+      userData.email,
+      userData.firstName,
+      userData.lastName,
+      userData.password,
+      userData.passwordSalt,
+    ],
+  );
+
+  console.log(res);
 }
 
 async function findByEmail(email: string) {
