@@ -6,8 +6,7 @@
   "scripts": {
     "debug": "export DEBUG=* && tsc && node dist/index.js --unhandled-rejections=strict",
     "start": "node dist/index.js --unhandled-rejections=strict",
-    "watch": "tsc --watch",
-    "dev": "nodemon dist/index.js --unhandled-rejections=strict",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "migrate:init": "prisma migrate dev --name init",
@@ -65,7 +64,8 @@
     "node-pg-migrate": "^6.0.0",
     "nodemailer": "^6.6.2",
     "pg": "^8.7.1",
-    "ts-node": "^10.2.1"
+    "ts-node": "^10.2.1",
+    "ts-node-dev": "^1.1.8"
   },
   "prettier": {
     "trailingComma": "all"
