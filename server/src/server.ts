@@ -22,6 +22,7 @@ import listRouter from "./list/list.routes";
 // import { BoardRoutes } from "./board/board.routes";
 // import ListRoutes from "./list/list.routes";
 import * as authMiddleware from "./auth/auth.middleware";
+import pool from "./db/pool";
 
 const app = express();
 // const server = http.createServer(app);
@@ -68,10 +69,6 @@ app.use("/api", authMiddleware.protect);
 app.use("/api", userRouter);
 app.use("/api", boardRouter);
 app.use("/api", listRouter);
-// routes.push(new AuthRoutes(app));
-// routes.push(new UserRoutes(app));
-// routes.push(new BoardRoutes(app));
-// routes.push(new ListRoutes(app));
 
 app.use(function handle404Erorr() {
   throw new NotFoundError(undefined);
@@ -80,16 +77,17 @@ app.use(function handle404Erorr() {
 app.use(errorHandler);
 
 function start(): void {
-  app.listen(appConfig.port, () => {
-    console.log(runningMessage);
-  });
+  pool
+    .connect(appConfig.sql)
+    .then(() => {
+      app.listen(appConfig.port, () => {
+        console.log(runningMessage);
+      });
+    })
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    });
 }
-
-// server.listen(appConfig.port, () => {
-//   routes.forEach((route) => {
-//     logger(`Routes configured for ${route.getName}`);
-//     console.log(runningMessage);
-//   });
-// });
 
 export { app, start };
