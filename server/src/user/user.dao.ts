@@ -1,10 +1,11 @@
+import { User, UserWithoutPassword } from "../common/types";
 import pool from "../db/pool";
 import { CreateDto } from "./dto/create.dto";
 
 class UserDao {
   static async create(
     data: CreateDto & { passwordSalt: Buffer },
-  ): Promise<{ id: number; email: string } | undefined> {
+  ): Promise<Pick<User, "id" | "email"> | undefined> {
     const result = await pool.query(
       `
             INSERT INTO users ("email", "firstName", "lastName", "password", "passwordSalt")
@@ -23,17 +24,7 @@ class UserDao {
     return result?.rows[0];
   }
 
-  static async findByEmail(email: string): Promise<
-    | {
-        id: number;
-        firstName: string;
-        lastName: string;
-        email: string;
-        password?: string;
-        passwordSalt?: Buffer;
-      }
-    | undefined
-  > {
+  static async findByEmail(email: string): Promise<User | undefined> {
     const result = await pool.query(
       `
         SELECT id, "firstName", "lastName", email, password, "passwordSalt"
@@ -49,7 +40,7 @@ class UserDao {
   static async updatePassword(
     id: number,
     data: { password: string; passwordSalt: Buffer },
-  ): Promise<{ id: number; email: string } | undefined> {
+  ): Promise<Pick<User, "id" | "email"> | undefined> {
     const result = await pool.query(
       `
         UPDATE users
@@ -66,15 +57,7 @@ class UserDao {
   static async findMany(
     limit = 25,
     page = 0,
-  ): Promise<
-    | {
-        id: number;
-        email: string;
-        lastName: string;
-        firstName: string;
-      }[]
-    | undefined
-  > {
+  ): Promise<UserWithoutPassword[] | undefined> {
     const results = await pool.query(
       `
         SELECT id, email, "firstName", "lastName", email

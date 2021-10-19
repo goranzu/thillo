@@ -3,26 +3,40 @@ import appConfig from "../config";
 import { BadUserInputError, NotFoundError } from "../common/errors";
 import { hashPassword, verifyPassword } from "../common/password";
 import { CreateDto } from "./dto/create.dto";
-import * as userDao from "./user.dao";
+// import * as userDao from "./user.dao";
+import userDao from "./user.dao";
 import prefixes from "../common/prefixes";
 import redisClient from "../common/redisClient";
 import * as emailService from "../common/services/email.service";
+import { User, UserWithoutPassword } from "../common/types";
 
-async function signUp(data: CreateDto) {
+async function signUp(data: CreateDto): Promise<Pick<User, "id" | "email">> {
   const { passwordSalt, hashedPassword } = await hashPassword(data.password);
   const user = await userDao.create({
     ...data,
     password: hashedPassword,
     passwordSalt,
   });
+
+  if (!user) {
+    throw new Error("Something went wrong.");
+  }
+
   return user;
 }
 
-async function signIn(email: string, password: string) {
+async function signIn(
+  email: string,
+  password: string,
+): Promise<UserWithoutPassword> {
   const user = await userDao.findByEmail(email);
 
   if (user == null) {
     throw new BadUserInputError("This email is not registered.", "email");
+  }
+
+  if (!user.password || !user.passwordSalt) {
+    throw new Error();
   }
 
   const isValidPassword = await verifyPassword(
@@ -43,7 +57,7 @@ async function signIn(email: string, password: string) {
   };
 }
 
-async function forgotPassword(email: string) {
+async function forgotPassword(email: string): Promise<void> {
   const user = await userDao.findByEmail(email);
 
   if (user == null) {
@@ -66,7 +80,7 @@ async function forgotPassword(email: string) {
   return;
 }
 
-async function resetPassword(password: string, token: string) {
+async function resetPassword(password: string, token: string): Promise<void> {
   const redisKey = `${prefixes.FORGOT_PASSWORD}${token}`;
 
   const userId = await redisClient.get(redisKey);
@@ -77,7 +91,7 @@ async function resetPassword(password: string, token: string) {
 
   const { hashedPassword, passwordSalt } = await hashPassword(password);
 
-  await userDao.updateById(Number(userId), {
+  await userDao.updatePassword(Number(userId), {
     password: hashedPassword,
     passwordSalt,
   });
@@ -87,16 +101,28 @@ async function resetPassword(password: string, token: string) {
   return;
 }
 
-async function findByEmail(email: string) {
+async function findByEmail(email: string): Promise<UserWithoutPassword> {
   const user = await userDao.findByEmail(email);
   if (user == null) {
     throw new NotFoundError("User not found.");
   }
+
+  delete user.password;
+  delete user.passwordSalt;
+
   return user;
 }
 
-async function listAllUsers(limit?: number, page?: number) {
-  const users = await userDao.getAllUser(limit, page);
+async function listAllUsers(
+  limit?: number,
+  page?: number,
+): Promise<UserWithoutPassword[]> {
+  const users = await userDao.findMany(limit, page);
+
+  if (users == null) {
+    throw new Error();
+  }
+
   return users;
 }
 
