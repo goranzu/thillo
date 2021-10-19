@@ -12,7 +12,7 @@ class Pool {
     return this._pool?.end();
   }
 
-  query(sql: string, values: any[]) {
+  query(sql: string, values?: any[]) {
     return this._pool?.query(sql, values);
   }
 }

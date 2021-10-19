@@ -1,5 +1,5 @@
 import express from "express";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import * as authController from "./auth.controller";
 import * as authMiddleware from "./auth.middleware";
 import * as validationMiddleware from "../common/middleware/validation.middleware";
@@ -39,9 +39,9 @@ router.post(
 );
 
 router.post(
-  "/reset-password",
+  "/reset-password/:token",
   body("password").isLength({ min: 4 }),
-  body("token").isString(),
+  param("token").isString(),
   validationMiddleware.validateRequest,
   authController.resetPassword,
 );
