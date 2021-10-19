@@ -48,7 +48,7 @@ const forgotPassword: Controller = async (req, res) => {
 };
 
 const resetPassword: Controller = async (req, res) => {
-  await userService.resetPassword(req.body.password, req.body.token);
+  await userService.resetPassword(req.body.password, req.params.token);
   res.status(204).end();
   return;
 };
