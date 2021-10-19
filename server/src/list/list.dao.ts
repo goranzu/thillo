@@ -1,6 +1,46 @@
 import prisma from "../common/client";
 import { FindList } from "../common/types";
+import pool from "../db/pool";
 import { CreateListDto, PatchListDto } from "./list.service";
+
+interface List {
+  id: number;
+  name: string;
+  description: string;
+}
+
+class ListDao {
+  static async create(data: CreateListDto): Promise<List | undefined> {
+    const result = await pool.query(
+      `
+            INSERT INTO lists (name, description, "boardId", "creatorId")
+            VALUES ($1, $2, $3, $4)
+            RETURNING name, description;
+        `,
+      [data.name, data.description || null, data.boardId, data.creatorId],
+    );
+    return result?.rows[0];
+  }
+
+  static async createMany(defaultLists: CreateListDto[]): Promise<void> {
+    for (const list of defaultLists) {
+      await this.create(list);
+    }
+  }
+
+  static async find(
+    listId: number,
+    boardId: number,
+    memberId: number,
+  ): Promise<List | undefined> {
+    // TODO: WIP
+    const listResult = await pool.query(`
+        SELECT id, name, description
+      `);
+
+    return listResult?.rows[0];
+  }
+}
 
 async function create(data: CreateListDto) {
   const list = await prisma.list.create({
