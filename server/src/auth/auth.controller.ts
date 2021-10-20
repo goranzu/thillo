@@ -2,15 +2,28 @@ import debug from "debug";
 import * as userService from "../user/user.service";
 import appConfig from "../config";
 import { Controller } from "../common/types";
+import { Request, Response } from "express";
+import {
+  ForgotPasswordInput,
+  ResetPasswordInput,
+  SignInUserInput,
+  SignUpUserInput,
+} from "../common/schemas/user.schema";
 
 const logger = debug("app:auth-controller");
 
-const signUp: Controller = async (req, res) => {
+const signUp: Controller = async (
+  req: Request<unknown, unknown, SignUpUserInput["body"]>,
+  res,
+) => {
   const user = await userService.signUp(req.body);
   res.status(201).json({ data: user });
 };
 
-const signIn: Controller = async (req, res) => {
+const signIn: Controller = async (
+  req: Request<unknown, unknown, SignInUserInput["body"]>,
+  res,
+) => {
   const user = await userService.signIn(req.body.email, req.body.password);
 
   //   Set the session
@@ -40,13 +53,23 @@ const logout: Controller = async (req, res) => {
   return;
 };
 
-const forgotPassword: Controller = async (req, res) => {
+const forgotPassword: Controller = async (
+  req: Request<unknown, unknown, ForgotPasswordInput["body"]>,
+  res,
+) => {
   await userService.forgotPassword(req.body.email);
   res.status(204).end();
   return;
 };
 
-const resetPassword: Controller = async (req, res) => {
+const resetPassword = async (
+  req: Request<
+    ResetPasswordInput["params"],
+    unknown,
+    ResetPasswordInput["body"]
+  >,
+  res: Response,
+): Promise<void> => {
   await userService.resetPassword(req.body.password, req.params.token);
   res.status(204).end();
   return;
