@@ -65,7 +65,8 @@
     "nodemailer": "^6.6.2",
     "pg": "^8.7.1",
     "ts-node": "^10.2.1",
-    "ts-node-dev": "^1.1.8"
+    "ts-node-dev": "^1.1.8",
+    "zod": "^3.10.3"
   },
   "prettier": {
     "trailingComma": "all"
