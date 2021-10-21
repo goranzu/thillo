@@ -1,6 +1,12 @@
 import express from "express";
 import { query, param, body } from "express-validator";
 import * as validationMiddleware from "../common/middleware/validation.middleware";
+import {
+  createListSchema,
+  deleteListSchema,
+  getListSchema,
+  updateListSchema,
+} from "../common/schemas/list.schema";
 import { MiddlewareFunction } from "../common/types";
 import * as listController from "./list.controller";
 
@@ -24,34 +30,41 @@ function extractParamToBody(...rest: string[]): MiddlewareFunction {
 
 const router = express.Router();
 
-router
-  .route("/api/lists")
-  .post(
-    body("name").isString().escape(),
-    body("description").isString().escape().optional(),
-    query("boardId").isInt().toInt(),
-    validationMiddleware.validateRequest,
-    extractQueryToBody("boardId"),
-    listController.createList,
-  );
+router.route("/api/lists").post(
+  validationMiddleware.validateResource(createListSchema),
+  // body("name").isString().escape(),
+  // body("description").isString().escape().optional(),
+  // query("boardId").isInt().toInt(),
+  // validationMiddleware.validateRequest,
+  // extractQueryToBody("boardId"),
+  listController.createList,
+);
 
 router
   .route("/api/lists/:listId")
-  .all(
-    query("boardId").isInt().toInt(),
-    param("listId").isInt().toInt(),
-    validationMiddleware.validateRequest,
-    extractQueryToBody("boardId"),
-    extractParamToBody("listId"),
+  //   .all(
+  //     validationMiddleware.validateResource(getListSchema),
+  // query("boardId").isInt().toInt(),
+  // param("listId").isInt().toInt(),
+  // validationMiddleware.validateRequest,
+  // extractQueryToBody("boardId"),
+  // extractParamToBody("listId"),
+  //   )
+  .get(
+    validationMiddleware.validateResource(getListSchema),
+    listController.getListById,
   )
-  .get(listController.getListById)
   .patch(
-    body("name").isString().escape().optional(),
-    body("description").isString().escape().optional(),
-    validationMiddleware.validateRequest,
+    validationMiddleware.validateResource(updateListSchema),
+    // body("name").isString().escape().optional(),
+    // body("description").isString().escape().optional(),
+    // validationMiddleware.validateRequest,
     listController.updateList,
   )
-  .delete(listController.deleteList);
+  .delete(
+    validationMiddleware.validateResource(deleteListSchema),
+    listController.deleteList,
+  );
 
 export default router;
 
