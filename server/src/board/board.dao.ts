@@ -1,29 +1,63 @@
 import prisma from "../common/client";
+import pool from "../db/pool";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
 
-async function list(userId: number) {
-  const boards = await prisma.board.findMany({
-    where: {
-      creatorId: userId,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-  return boards;
+interface Board {
+  id: number;
+  name: string;
+  isPrivate: boolean;
+  description?: string;
+  creatorId?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-async function create(data: CreateBoardDto) {
+async function list(userId: number): Promise<Board[] | undefined> {
+  const boards = await pool.query(
+    `
+        SELECT id, name, "isPrivate", description
+        FROM boards
+        WHERE "creatorId" = $1
+        ORDER BY "createdAt" DESC;
+    `,
+    [userId],
+  );
+
+  return boards?.rows;
+  //   const boards = await prisma.board.findMany({
+  //     where: {
+  //       creatorId: userId,
+  //     },
+  //     orderBy: {
+  //       createdAt: "desc",
+  //     },
+  //   });
+  //   return boards;
+}
+
+async function create(data: CreateBoardDto): Promise<Board | undefined> {
   //   Also add an entry in the board_members table
-  const board = await prisma.board.create({
-    data: {
-      name: data.name,
-      description: data.description,
-      creatorId: data.creatorId,
-      members: { create: { memberId: data.creatorId } },
-    },
-  });
-  return board;
+
+  const board = await pool.query(
+    `
+        INSERT INTO boards (name, description, "creatorId")
+        VALUES ($1, $2, $3)
+        RETURNING *;
+    `,
+    [data.name, data.description, data.creatorId],
+  );
+
+  return board?.rows[0];
+
+  //   const board = await prisma.board.create({
+  //     data: {
+  //       name: data.name,
+  //       description: data.description,
+  //       creatorId: data.creatorId,
+  //       members: { create: { memberId: data.creatorId } },
+  //     },
+  //   });
+  //   return board;
 }
 
 async function findBoardByMemberId(memberId: number, boardId: number) {
