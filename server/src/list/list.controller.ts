@@ -1,24 +1,9 @@
-import { Request, Response } from "express";
-import {
-  CreateListInput,
-  DeleteListInput,
-  GetListInput,
-  UpdateListInput,
-} from "../common/schemas/list.schema";
 import { Controller } from "../common/types";
 import * as listService from "./list.service";
 
-const createList = async (
-  req: Request<
-    unknown,
-    unknown,
-    CreateListInput["body"],
-    CreateListInput["query"]
-  >,
-  res: Response,
-): Promise<void> => {
+const createList: Controller = async (req, res): Promise<void> => {
   const { name, description } = req.body;
-  const { boardId } = req.query;
+  const boardId = Number(req.query.boardId);
   const creatorId = res.locals.user.id;
   const list = await listService.createList({
     name,
@@ -31,13 +16,10 @@ const createList = async (
   return;
 };
 
-const getListById = async (
-  req: Request<GetListInput["params"], unknown, unknown, GetListInput["query"]>,
-  res: Response,
-): Promise<void> => {
+const getListById: Controller = async (req, res): Promise<void> => {
   const memberId = res.locals.user.id;
-  const { boardId } = req.query;
-  const { listId } = req.params;
+  const boardId = Number(req.query.boardId);
+  const listId = Number(req.params.listId);
 
   const list = await listService.getList({ memberId, boardId, listId });
 
@@ -50,19 +32,11 @@ const getListById = async (
   return;
 };
 
-const updateList = async (
-  req: Request<
-    UpdateListInput["params"],
-    unknown,
-    UpdateListInput["body"],
-    UpdateListInput["query"]
-  >,
-  res: Response,
-): Promise<void> => {
+const updateList: Controller = async (req, res): Promise<void> => {
   const memberId = res.locals.user.id;
   const { name, description } = req.body;
-  const { listId } = req.params;
-  const { boardId } = req.query;
+  const listId = Number(req.params.listId);
+  const boardId = Number(req.query.boardId);
 
   const list = await listService.updateList({
     boardId,
@@ -76,18 +50,10 @@ const updateList = async (
   return;
 };
 
-const deleteList = async (
-  req: Request<
-    DeleteListInput["params"],
-    unknown,
-    unknown,
-    DeleteListInput["query"]
-  >,
-  res: Response,
-): Promise<void> => {
+const deleteList: Controller = async (req, res): Promise<void> => {
   const memberId = res.locals.user.id;
-  const { listId } = req.params;
-  const { boardId } = req.query;
+  const listId = Number(req.params.listId);
+  const boardId = Number(req.query.boardId);
 
   await listService.deleteList(boardId, listId, memberId);
 
