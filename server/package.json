@@ -18,7 +18,7 @@
   "author": "Goran Tenic",
   "license": "ISC",
   "devDependencies": {
-    "@tsconfig/node14": "^1.0.1",
+    "@tsconfig/node16": "^1.0.2",
     "@types/connect-redis": "0.0.16",
     "@types/cors": "^2.8.10",
     "@types/debug": "^4.1.6",
