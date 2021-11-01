@@ -1,14 +1,9 @@
 import express from "express";
-// import { body, param } from "express-validator";
+import { body, param } from "express-validator";
 import * as authController from "./auth.controller";
 import * as authMiddleware from "./auth.middleware";
 import * as validationMiddleware from "../common/middleware/validation.middleware";
-import {
-  signUpSchema,
-  signInSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
-} from "../common/schemas/user.schema";
+
 // import debug from "debug";
 
 // const logger = debug("app:auth.routes");
@@ -17,13 +12,19 @@ const router = express.Router();
 
 router.post(
   "/signin",
-  validationMiddleware.validateResource(signInSchema),
+  body("email").isEmail().normalizeEmail(),
+  body("password").isLength({ min: 4 }),
+  validationMiddleware.validateRequest,
   authController.signIn,
 );
 
 router.post(
   "/signup",
-  validationMiddleware.validateResource(signUpSchema),
+  body("firstName").isString(),
+  body("lastName").isString(),
+  body("email").isEmail().normalizeEmail(),
+  body("password").isLength({ min: 4 }),
+  validationMiddleware.validateRequest,
   authController.signUp,
 );
 
@@ -33,13 +34,16 @@ router.delete("/logout", authMiddleware.protect, authController.logout);
 
 router.post(
   "/forgot-password",
-  validationMiddleware.validateResource(forgotPasswordSchema),
+  body("email").isEmail().normalizeEmail(),
+  validationMiddleware.validateRequest,
   authController.forgotPassword,
 );
 
 router.post(
   "/reset-password/:token",
-  validationMiddleware.validateResource(resetPasswordSchema),
+  body("password").isLength({ min: 4 }),
+  param("token").isString(),
+  validationMiddleware.validateRequest,
   authController.resetPassword,
 );
 
