@@ -1,4 +1,3 @@
-import prisma from "../common/client";
 import pool from "../db/pool";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
 
