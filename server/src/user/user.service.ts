@@ -1,4 +1,3 @@
-import cuid from "cuid";
 import appConfig from "../config";
 import { BadUserInputError, NotFoundError } from "../common/errors";
 import { hashPassword, verifyPassword } from "../common/password";
@@ -9,6 +8,7 @@ import prefixes from "../common/prefixes";
 import redisClient from "../common/redisClient";
 import * as emailService from "../common/services/email.service";
 import { User, UserWithoutPassword } from "../common/types";
+import { generateToken } from "../common/generateToken";
 
 async function signUp(data: CreateDto): Promise<Pick<User, "id" | "email">> {
   const { passwordSalt, hashedPassword } = await hashPassword(data.password);
@@ -64,7 +64,7 @@ async function forgotPassword(email: string): Promise<void> {
     throw new BadUserInputError("This email is not registered.", "email");
   }
 
-  const token = cuid();
+  const token = generateToken();
 
   const link = `Follow this <a href="${appConfig.frontend}/reset-password/${token}">link</a> to reset your password.`;
 
