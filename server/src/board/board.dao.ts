@@ -1,3 +1,4 @@
+import { UnauthorizedError } from "../common/errors";
 import pool from "../db/pool";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
 
@@ -23,19 +24,10 @@ async function list(userId: number): Promise<Board[] | undefined> {
   );
 
   return boards?.rows;
-  //   const boards = await prisma.board.findMany({
-  //     where: {
-  //       creatorId: userId,
-  //     },
-  //     orderBy: {
-  //       createdAt: "desc",
-  //     },
-  //   });
-  //   return boards;
 }
 
 async function create(data: CreateBoardDto): Promise<Board | undefined> {
-  //   Also add an entry in the board_members table
+  //   Also add an entry in the board_members table?
 
   const board = await pool.query(
     `
@@ -47,145 +39,135 @@ async function create(data: CreateBoardDto): Promise<Board | undefined> {
   );
 
   return board?.rows[0];
-
-  //   const board = await prisma.board.create({
-  //     data: {
-  //       name: data.name,
-  //       description: data.description,
-  //       creatorId: data.creatorId,
-  //       members: { create: { memberId: data.creatorId } },
-  //     },
-  //   });
-  //   return board;
 }
 
-async function findBoardByMemberId(memberId: number, boardId: number) {
+async function findBoardByMemberId(
+  memberId: number,
+  boardId: number,
+): Promise<Board | undefined> {
   //   Finds board if logged in user is the creator or a member
+  const board = await pool.query(
+    `
+    SELECT id, name, "isPrivate", description, "creatorId", "createdAt" "updatedAt"
+    FROM boards
+    WHERE "creatorId" = $1 AND id = $2;
+  `,
+    [memberId, boardId],
+  );
   console.log({ memberId, boardId });
-  const board = await prisma.board.findFirst({
-    where: {
-      id: boardId,
-      AND: {
-        creatorId: memberId,
-      },
-      OR: {
-        id: boardId,
-        AND: {
-          members: {
-            some: {
-              memberId,
-            },
-          },
-        },
-      },
-    },
-    include: {
-      lists: { orderBy: { createdAt: "asc" } },
-      members: {
-        include: {
-          member: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true,
-            },
-          },
-        },
-      },
-    },
-  });
 
-  return board;
+  return board?.rows[0];
 }
 
-async function update(data: UpdateBoardDto) {
-  const board = await prisma.board.update({
-    where: {
-      id_creatorId: {
-        id: data.boardId,
-        creatorId: data.creatorId,
-      },
-    },
-    data: {
-      name: data.name,
-      description: data.description,
-      isPrivate: data.isPrivate,
-    },
-  });
+async function update(data: UpdateBoardDto): Promise<Board | undefined> {
+  const board = await pool.query(
+    `
+        UPDATE boards
+        SET name = $1
+            "isPrivate" = $2
+            description = $3
+        WHERE id = $3 AND "creatorId" = $4;
+    `,
+    [data.name, data.isPrivate, data.description, data.boardId, data.creatorId],
+  );
 
-  return board;
+  return board?.rows[0];
 }
 
-async function deleteBoard(boardId: number, creatorId: number) {
-  const board = await prisma.board.delete({
-    where: { id_creatorId: { id: boardId, creatorId } },
-  });
-  return board;
+async function deleteBoard(
+  boardId: number,
+  creatorId: number,
+): Promise<boolean> {
+  const result = await pool.query(
+    `
+        DELETE FROM boards
+        WHERE id = $1 AND "creatorId" = $2;
+    `,
+    [boardId, creatorId],
+  );
+  console.log(result);
+
+  return true;
+}
+
+async function checkIfUserIsCreator(
+  boardId: number,
+  creatorId: number,
+): Promise<boolean> {
+  const check = await pool.query(
+    `
+        SELECT id
+        FROM boards
+        WHERE id = $1 AND "creatorId" = $2
+    `,
+    [boardId, creatorId],
+  );
+
+  if (check?.rowCount && check.rowCount > 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 async function addMember(
   boardId: number,
   creatorId: number,
   newMemberId: number,
-) {
-  const board = await prisma.board.update({
-    where: {
-      id_creatorId: {
-        id: boardId,
-        creatorId,
-      },
-    },
-    data: {
-      members: {
-        create: {
-          memberId: newMemberId,
-        },
-      },
-    },
-  });
-  return board;
+): Promise<boolean> {
+  const isCreator = await checkIfUserIsCreator(boardId, creatorId);
+
+  if (!isCreator) {
+    throw new UnauthorizedError();
+  }
+
+  const result = await pool.query(
+    `
+        INSERT INTO "boardMembers" ("memberId", "boardId")
+        VALUES ($1, $2);
+    `,
+    [newMemberId, boardId],
+  );
+  console.log(result);
+  return true;
 }
 
 async function removeMember(
   boardId: number,
   creatorId: number,
   memberId: number,
-) {
+): Promise<boolean> {
   //   The logged in user is able to add members to a board only if this user als is the creator of the board
-  const board = await prisma.board.update({
-    where: {
-      id_creatorId: {
-        id: boardId,
-        creatorId,
-      },
-    },
-    data: {
-      members: {
-        delete: {
-          memberId_boardId: {
-            boardId,
-            memberId,
-          },
-        },
-      },
-    },
-  });
-  return board;
+  const isCreator = await checkIfUserIsCreator(boardId, creatorId);
+  if (!isCreator) {
+    throw new UnauthorizedError();
+  }
+
+  const result = await pool.query(
+    `
+    DELETE FROM "boardMembers"
+    WHERE "memberId" = $1 AND "boardId" = $2;
+  `,
+    [memberId, boardId],
+  );
+
+  console.log(result);
+  return true;
 }
 
-async function findMember(memberId: number, boardId: number) {
-  const member = await prisma.boardMembers.findUnique({
-    where: {
-      memberId_boardId: {
-        memberId,
-        boardId,
-      },
-    },
-    select: { memberId: true },
-  });
-
-  return member;
+async function findMember(
+  memberId: number,
+  boardId: number,
+): Promise<number | undefined> {
+  const mem = await pool.query(
+    `
+        SELECT "memberId"
+        FROM "boardMembers"
+        WHERE "boardId" = $1 AND "memberId" = $2
+    `,
+    [boardId, memberId],
+  );
+  return mem?.rows[0];
 }
 
 export {
@@ -198,153 +180,3 @@ export {
   removeMember,
   findMember,
 };
-
-// class BoardDao {
-//   async list(userId: number) {
-//     const boards = await prisma.board.findMany({
-//       where: {
-//         creatorId: userId,
-//       },
-//       orderBy: {
-//         createdAt: "desc",
-//       },
-//     });
-//     return boards;
-//   }
-
-//   async create(data: CreateBoardDto) {
-//     //   Also add an entry in the board_members table
-//     const board = await prisma.board.create({
-//       data: {
-//         name: data.name,
-//         description: data.description,
-//         creatorId: data.creatorId,
-//         members: { create: { memberId: data.creatorId } },
-//       },
-//     });
-//     return board;
-//   }
-
-//   async findBoardByMemberId(memberId: number, boardId: number) {
-//     //   Finds board if logged in user is the creator or a member
-//     console.log({ memberId, boardId });
-//     const board = await prisma.board.findFirst({
-//       where: {
-//         id: boardId,
-//         AND: {
-//           creatorId: memberId,
-//         },
-//         OR: {
-//           id: boardId,
-//           AND: {
-//             members: {
-//               some: {
-//                 memberId,
-//               },
-//             },
-//           },
-//         },
-//       },
-//       include: {
-//         lists: { orderBy: { createdAt: "asc" } },
-//         members: {
-//           include: {
-//             member: {
-//               select: {
-//                 id: true,
-//                 firstName: true,
-//                 lastName: true,
-//                 email: true,
-//               },
-//             },
-//           },
-//         },
-//       },
-//     });
-
-//     return board;
-//   }
-
-//   async update(data: UpdateBoardDto) {
-//     const board = await prisma.board.update({
-//       where: {
-//         id_creatorId: {
-//           id: data.boardId,
-//           creatorId: data.creatorId,
-//         },
-//       },
-//       data: {
-//         name: data.name,
-//         description: data.description,
-//         isPrivate: data.isPrivate,
-//       },
-//     });
-
-//     return board;
-//   }
-
-//   async delete(boardId: number, creatorId: number) {
-//     const board = await prisma.board.delete({
-//       where: { id_creatorId: { id: boardId, creatorId } },
-//     });
-//     return board;
-//   }
-
-//   async addMember(boardId: number, creatorId: number, newMemberId: number) {
-//     const board = await prisma.board.update({
-//       where: {
-//         id_creatorId: {
-//           id: boardId,
-//           creatorId,
-//         },
-//       },
-//       data: {
-//         members: {
-//           create: {
-//             memberId: newMemberId,
-//           },
-//         },
-//       },
-//     });
-//     return board;
-//   }
-
-//   async removeMember(boardId: number, creatorId: number, memberId: number) {
-//     //   The logged in user is able to add members to a board only if this user als is the creator of the board
-//     const board = await prisma.board.update({
-//       where: {
-//         id_creatorId: {
-//           id: boardId,
-//           creatorId,
-//         },
-//       },
-//       data: {
-//         members: {
-//           delete: {
-//             memberId_boardId: {
-//               boardId,
-//               memberId,
-//             },
-//           },
-//         },
-//       },
-//     });
-//     return board;
-//   }
-
-//   async findMember(memberId: number, boardId: number) {
-//     const member = await prisma.boardMembers.findUnique({
-//       where: {
-//         memberId_boardId: {
-//           memberId,
-//           boardId,
-//         },
-//       },
-//       select: { memberId: true },
-//     });
-
-//     return member;
-//   }
-// }
-
-// export default new BoardDao();
