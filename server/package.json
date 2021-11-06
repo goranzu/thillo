@@ -10,7 +10,8 @@
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "test": "npm run docker:up && dotenv -e .env.test -- npm run migrate:init && dotenv -e .env.test -- jest -i --detectOpenHandles --watch",
-    "migrate": "node-pg-migrate --envPath .env --tsconfig ./tsconfig.json"
+    "migrate": "node-pg-migrate up --envPath .env --tsconfig ./tsconfig.json",
+    "rollback": "node-pg-migrate down --envPath .env --tsconfig ./tsconfig.json"
   },
   "author": "Goran Tenic",
   "license": "ISC",
