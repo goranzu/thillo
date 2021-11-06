@@ -1,8 +1,7 @@
-import { UnauthorizedError } from "../common/errors";
 import pool from "../db/pool";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
 
-interface Board {
+export interface Board {
   id: number;
   name: string;
   isPrivate: boolean;
@@ -90,7 +89,7 @@ async function deleteBoard(
   return true;
 }
 
-async function checkIfUserIsCreator(
+async function findBoardCreator(
   boardId: number,
   creatorId: number,
 ): Promise<boolean> {
@@ -112,47 +111,36 @@ async function checkIfUserIsCreator(
 
 async function addMember(
   boardId: number,
-  creatorId: number,
   newMemberId: number,
-): Promise<boolean> {
-  const isCreator = await checkIfUserIsCreator(boardId, creatorId);
-
-  if (!isCreator) {
-    throw new UnauthorizedError();
-  }
-
-  const result = await pool.query(
+): Promise<Board | undefined> {
+  const board = await pool.query(
     `
         INSERT INTO "boardMembers" ("memberId", "boardId")
-        VALUES ($1, $2);
+        VALUES ($1, $2)
+        RETURNING *;
     `,
     [newMemberId, boardId],
   );
-  console.log(result);
-  return true;
+  console.log(board);
+  return board?.rows[0];
 }
 
 async function removeMember(
   boardId: number,
-  creatorId: number,
   memberId: number,
-): Promise<boolean> {
+): Promise<Board | undefined> {
   //   The logged in user is able to add members to a board only if this user als is the creator of the board
-  const isCreator = await checkIfUserIsCreator(boardId, creatorId);
-  if (!isCreator) {
-    throw new UnauthorizedError();
-  }
-
   const result = await pool.query(
     `
-    DELETE FROM "boardMembers"
-    WHERE "memberId" = $1 AND "boardId" = $2;
+        DELETE FROM "boardMembers"
+        WHERE "memberId" = $1 AND "boardId" = $2
+        RETURNING *;
   `,
     [memberId, boardId],
   );
 
   console.log(result);
-  return true;
+  return result?.rows[0];
 }
 
 async function findMember(
@@ -179,4 +167,5 @@ export {
   addMember,
   removeMember,
   findMember,
+  findBoardCreator,
 };
