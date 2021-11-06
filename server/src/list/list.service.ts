@@ -33,7 +33,10 @@ async function getList({ listId, boardId, memberId }: FindList) {
   return list;
 }
 
-async function createDefaultLists(boardId: number, creatorId: number) {
+async function createDefaultLists(
+  boardId: number,
+  creatorId: number,
+): Promise<void> {
   const defaultLists = [
     {
       name: "To Do",
@@ -57,7 +60,7 @@ async function createDefaultLists(boardId: number, creatorId: number) {
 }
 
 async function updateList(data: PatchListDto) {
-  await boardService.userIsMember(data.memberId, data.boardId);
+  //   await boardService.userIsMember(data.memberId, data.boardId);
 
   const list = await listDao.update(data);
   return list;
@@ -65,7 +68,7 @@ async function updateList(data: PatchListDto) {
 
 async function deleteList(boardId: number, listId: number, memberId: number) {
   //   TODO this should throw
-  await boardService.userIsMember(memberId, boardId);
+  //   await boardService.userIsMember(memberId, boardId);
   await listDao.deleteList(listId, boardId);
   return true;
 }
