@@ -25,8 +25,12 @@ async function listUsersBoards(userId: number): Promise<boardDao.Board[]> {
   return boards;
 }
 
-async function create(data: CreateBoardDto) {
+async function create(data: CreateBoardDto): Promise<boardDao.Board> {
   const board = await boardDao.create(data);
+
+  if (!board) {
+    throw new Error();
+  }
 
   await listService.createDefaultLists(board.id, data.creatorId);
 
