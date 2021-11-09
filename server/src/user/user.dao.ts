@@ -4,21 +4,15 @@ import { CreateDto } from "./dto/create.dto";
 
 class UserDao {
   static async create(
-    data: CreateDto & { passwordSalt: Buffer },
+    data: CreateDto,
   ): Promise<Pick<User, "id" | "email"> | undefined> {
     const result = await pool.query(
       `
-            INSERT INTO users ("email", "firstName", "lastName", "password", "passwordSalt")
+            INSERT INTO users ("email", "firstName", "lastName", "password")
             VALUES ($1, $2, $3, $4, $5)
             RETURNING "id", "email";
         `,
-      [
-        data.email,
-        data.firstName,
-        data.lastName,
-        data.password,
-        data.passwordSalt,
-      ],
+      [data.email, data.firstName, data.lastName, data.password],
     );
 
     return result?.rows[0];
@@ -27,7 +21,7 @@ class UserDao {
   static async findByEmail(email: string): Promise<User | undefined> {
     const result = await pool.query(
       `
-        SELECT id, "firstName", "lastName", email, password, "passwordSalt"
+        SELECT id, "firstName", "lastName", email, password
         FROM users
         WHERE email = $1;
     `,
@@ -39,16 +33,16 @@ class UserDao {
 
   static async updatePassword(
     id: number,
-    data: { password: string; passwordSalt: Buffer },
+    data: { password: string },
   ): Promise<Pick<User, "id" | "email"> | undefined> {
     const result = await pool.query(
       `
         UPDATE users
-        SET password = $2, "passwordSalt" = $3
+        SET password = $2
         WHERE id = $1
         RETURNING id, email;
       `,
-      [id, data.password, data.passwordSalt],
+      [id, data.password],
     );
 
     return result?.rows[0];

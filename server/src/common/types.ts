@@ -39,8 +39,6 @@ export interface User {
   lastName: string;
   email: string;
   password?: string;
-  passwordSalt?: Buffer;
 }
 
-export interface UserWithoutPassword
-  extends Omit<User, "password" | "passwordSalt"> {}
+export interface UserWithoutPassword extends Omit<User, "password"> {}

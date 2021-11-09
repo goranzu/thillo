@@ -11,11 +11,10 @@ import { User, UserWithoutPassword } from "../common/types";
 import { generateToken } from "../common/generateToken";
 
 async function signUp(data: CreateDto): Promise<Pick<User, "id" | "email">> {
-  const { passwordSalt, hashedPassword } = await hashPassword(data.password);
+  const hashedPassword = await hashPassword(data.password);
   const user = await userDao.create({
     ...data,
     password: hashedPassword,
-    passwordSalt,
   });
 
   if (!user) {
@@ -35,15 +34,11 @@ async function signIn(
     throw new BadUserInputError("This email is not registered.", "email");
   }
 
-  if (!user.password || !user.passwordSalt) {
+  if (!user.password) {
     throw new Error();
   }
 
-  const isValidPassword = await verifyPassword(
-    password,
-    user.password,
-    user.passwordSalt,
-  );
+  const isValidPassword = await verifyPassword(password, user.password);
 
   if (!isValidPassword) {
     throw new BadUserInputError("Invalid password.", "password");
@@ -89,11 +84,10 @@ async function resetPassword(password: string, token: string): Promise<void> {
     throw new BadUserInputError("Invalid token.", "token");
   }
 
-  const { hashedPassword, passwordSalt } = await hashPassword(password);
+  const hashedPassword = await hashPassword(password);
 
   await userDao.updatePassword(Number(userId), {
     password: hashedPassword,
-    passwordSalt,
   });
 
   await redisClient.del(redisKey);
@@ -108,7 +102,6 @@ async function findByEmail(email: string): Promise<UserWithoutPassword> {
   }
 
   delete user.password;
-  delete user.passwordSalt;
 
   return user;
 }

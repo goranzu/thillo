@@ -28,18 +28,13 @@ function buildUser(overrides?: Record<string, any>): User & {
 
 async function buildUserWithHashedPassword(
   overrides?: Record<string, any>,
-): Promise<
-  User & {
-    passwordSalt: Buffer;
-  }
-> {
-  const { hashedPassword, passwordSalt } = await hashPassword("password");
+): Promise<User> {
+  const hashedPassword = await hashPassword("password");
   return {
     email: faker.internet.email(),
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     password: hashedPassword,
-    passwordSalt,
     ...overrides,
   };
 }

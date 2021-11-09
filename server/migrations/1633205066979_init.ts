@@ -9,7 +9,6 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             "lastName" VARCHAR(254) NOT NULL,
             email VARCHAR(254) UNIQUE NOT NULL,
             password VARCHAR(500) NOT NULL,
-            "passwordSalt" BYTEA NOT NULL,
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
