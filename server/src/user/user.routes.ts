@@ -13,20 +13,3 @@ router.post(
 );
 
 export default router;
-
-// export class UserRoutes extends CommonRoutesConfig {
-//   constructor(app: express.Application) {
-//     super(app, "UserRoutes");
-//   }
-
-//   configureRoutes(): express.Application {
-//     this.app.post(
-//       "/api/users/find",
-//       body("email").isEmail().normalizeEmail(),
-//       validationMiddleware.validateRequest,
-//       userController.findByEmail,
-//     );
-
-//     return this.app;
-//   }
-// }

@@ -10,8 +10,6 @@ const protect: MiddlewareFunction = (req, res, next) => {
 
   res.locals.user = user;
 
-  // req.user = user;
-
   next();
 };
 
@@ -22,27 +20,3 @@ const checkIfUserIsMemberOfBoard: MiddlewareFunction = (req, res, next) => {
 };
 
 export { protect, checkIfUserIsMemberOfBoard };
-
-// class AuthMiddleware {
-//   protect: MiddlewareFunction = (req, res, next) => {
-//     const { user } = req.session;
-
-//     if (user == null) {
-//       throw new UnauthorizedError();
-//     }
-
-//     res.locals.user = user;
-
-//     // req.user = user;
-
-//     next();
-//   };
-
-//   checkIfUserIsMemberOfBoard: MiddlewareFunction = (req, res, next) => {
-//     const { boardId } = req.params;
-
-//     next();
-//   };
-// }
-
-// export default new AuthMiddleware();
