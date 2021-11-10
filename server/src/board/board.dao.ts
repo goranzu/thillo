@@ -47,7 +47,7 @@ async function findBoardByMemberId(
   //   Finds board if logged in user is the creator or a member
   const board = await pool.query(
     `
-    SELECT id, name, "isPrivate", description, "creatorId", "createdAt" "updatedAt"
+    SELECT id, name, "isPrivate", description, "creatorId", "createdAt", "updatedAt"
     FROM boards
     WHERE "creatorId" = $1 AND id = $2;
   `,
@@ -59,13 +59,36 @@ async function findBoardByMemberId(
 }
 
 async function update(data: UpdateBoardDto): Promise<Board | undefined> {
+  let query = ["UPDATE boards SET"];
+
+  const filteredData = Object.entries(data).reduce(
+    (prev: Record<string, any>, [key, value]) => {
+      if (value) {
+        prev[key] = value;
+      }
+      return prev;
+    },
+    {},
+  );
+
+  const set = Object.keys(filteredData)
+    .map((val, i) => {
+      return `"${val}" = $${i + 1}`;
+    })
+    .join(", ");
+
+  query = [...query, set];
+
+  console.log(query);
+
   const board = await pool.query(
     `
         UPDATE boards
-        SET name = $1
-            "isPrivate" = $2
-            description = $3
-        WHERE id = $3 AND "creatorId" = $4;
+        SET name = $1,
+            "isPrivate" = $2,
+            description = $3,
+            "updatedAt" = NOW()
+        WHERE id = $4 AND "creatorId" = $5;
     `,
     [data.name, data.isPrivate, data.description, data.boardId, data.creatorId],
   );
