@@ -9,7 +9,7 @@ class UserDao {
     const result = await pool.query(
       `
             INSERT INTO users ("email", "firstName", "lastName", "password")
-            VALUES ($1, $2, $3, $4, $5)
+            VALUES ($1, $2, $3, $4)
             RETURNING "id", "email";
         `,
       [data.email, data.firstName, data.lastName, data.password],

@@ -39,6 +39,10 @@ export interface User {
   lastName: string;
   email: string;
   password?: string;
+  name?: string;
 }
 
-export interface UserWithoutPassword extends Omit<User, "password"> {}
+export interface UserWithoutPassword
+  extends Omit<User, "password" | "firstName" | "lastName"> {
+  name: string;
+}

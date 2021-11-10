@@ -46,8 +46,7 @@ async function signIn(
 
   return {
     id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
+    name: `${user.firstName} ${user.lastName}`,
     email: user.email,
   };
 }
@@ -101,9 +100,11 @@ async function findByEmail(email: string): Promise<UserWithoutPassword> {
     throw new NotFoundError("User not found.");
   }
 
-  delete user.password;
-
-  return user;
+  return {
+    id: user.id,
+    email: user.email,
+    name: `${user.firstName} ${user.lastName}`,
+  };
 }
 
 async function listAllUsers(
