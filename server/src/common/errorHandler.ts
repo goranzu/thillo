@@ -12,9 +12,14 @@ function errorHandler(
   res: Response,
   _next: NextFunction,
 ): void {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Something went wrong...";
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "Something went wrong...";
   const param = err.param;
+
+  if (err.message?.includes("duplicate key")) {
+    statusCode = 400;
+    message = "Duplicate resource.";
+  }
 
   res.status(statusCode).json({
     errors: [
