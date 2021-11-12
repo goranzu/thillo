@@ -7,18 +7,24 @@ function errorHandler(
     statusCode: number;
     meta?: { target?: [string]; cause: string };
     param: string;
+    constraint?: string;
   },
   req: Request,
   res: Response,
   _next: NextFunction,
 ): void {
+  console.log(err.constraint);
   let statusCode = err.statusCode || 500;
   let message = err.message || "Something went wrong...";
   const param = err.param;
 
-  if (err.message?.includes("duplicate key")) {
-    statusCode = 400;
-    message = "Duplicate resource.";
+  if (err.constraint) {
+    switch (err.constraint) {
+      case "users_email_key":
+        statusCode = 400;
+        message = "This email is already registred.";
+        break;
+    }
   }
 
   res.status(statusCode).json({
