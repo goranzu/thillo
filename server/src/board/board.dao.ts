@@ -46,17 +46,28 @@ async function findBoardByMemberId(
   boardId: number,
 ): Promise<Board | undefined> {
   //   Finds board if logged in user is the creator or a member
-  const board = await pool.query(
+
+  const databaseBoards = await pool.query(
     `
-    SELECT id, name, "isPrivate", description, "creatorId", "createdAt", "updatedAt"
-    FROM boards
-    WHERE "creatorId" = $1 AND id = $2;
-  `,
+      SELECT id, name, "isPrivate", description, "creatorId", "createdAt", "updatedAt"
+      FROM boards
+      WHERE "creatorId" = $1 AND id = $2;
+    `,
     [memberId, boardId],
   );
-  console.log({ memberId, boardId });
 
-  return board?.rows[0];
+  const lists = await pool.query(
+    `
+      SELECT id, name, description, "createdAt", "updatedAt" FROM lists WHERE "boardId" = $1;
+    `,
+    [boardId],
+  );
+
+  const board = databaseBoards?.rows[0];
+  board.lists = lists?.rows;
+  console.log(lists?.rows);
+
+  return board;
 }
 
 async function update(
