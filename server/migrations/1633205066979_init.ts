@@ -7,12 +7,13 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             id SERIAL NOT NULL,
             "firstName" VARCHAR(254) NOT NULL,
             "lastName" VARCHAR(254) NOT NULL,
-            email VARCHAR(254) UNIQUE NOT NULL,
+            email VARCHAR(254) NOT NULL,
             password VARCHAR(500) NOT NULL,
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            PRIMARY KEY (id)
+            CONSTRAINT users_id_pkey PRIMARY KEY (id),
+            CONSTRAINT users_email_key UNIQUE (email)
         );
 
         CREATE TABLE boards (
@@ -20,34 +21,49 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             name VARCHAR(100) NOT NULL,
             "isPrivate" BOOLEAN NOT NULL DEFAULT false,
             description VARCHAR(1000),
-            "creatorId" INTEGER REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            "creatorId" INTEGER NOT NULL,
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            UNIQUE (name, "creatorId"),
-            PRIMARY KEY (id)
+            CONSTRAINT boards_name_creatorId_key UNIQUE (name, "creatorId"),
+            CONSTRAINT boards_id_pkey PRIMARY KEY (id),
+            CONSTRAINT boards_creatorId_fkey FOREIGN KEY ("creatorId")
+                        REFERENCES users (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE
         );
 
         CREATE TABLE lists (
             id SERIAL NOT NULL,
             name VARCHAR(100) NOT NULL,
             description VARCHAR(1000),
-            "creatorId" INTEGER REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-            "boardId" INTEGER REFERENCES boards(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            "creatorId" INTEGER NOT NULL,
+            "boardId" INTEGER NOT NULL,
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            UNIQUE (name, "boardId"),
-            PRIMARY KEY (id)
+            CONSTRAINT lists_name_boardId_key UNIQUE (name, "boardId"),
+            CONSTRAINT lists_id_pkey PRIMARY KEY (id),
+            CONSTRAINT lists_creatorId_fkey FOREIGN KEY ("creatorId")
+                        REFERENCES users (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE,
+            CONSTRAINT lists_boardId_fkey FOREIGN KEY ("boardId")
+                        REFERENCES boards (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE
         );
 
         CREATE TABLE "boardMembers" (
-            "memberId" INTEGER REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-            "boardId" INTEGER REFERENCES boards(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            "memberId" INTEGER NOT NULL,
+            "boardId" INTEGER NOT NULL,
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            PRIMARY KEY ("memberId", "boardId")
+            CONSTRAINT boardMembers_memberId_boardId_pkey PRIMARY KEY ("memberId", "boardId"),
+            CONSTRAINT boardMembers_boardId_fkey FOREIGN KEY ("boardId")
+                        REFERENCES boards (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE,
+            CONSTRAINT  boardMembers_memberId_fkey FOREIGN KEY ("memberId")
+                        REFERENCES users (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE
         );
 
         CREATE TABLE cards (
@@ -55,32 +71,47 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             title VARCHAR(100) NOT NULL,
             description VARCHAR(1000),
             "coverUrl" VARCHAR(500),
-            "listId" INTEGER REFERENCES lists(id) ON DELETE CASCADE ON UPDATE CASCADE,
-            "creatorId" INTEGER REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            "listId" INTEGER NOT NULL,
+            "creatorId" INTEGER NOT NULL,
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            PRIMARY KEY (id)
+            CONSTRAINT cards_id_pkey PRIMARY KEY (id),
+            CONSTRAINT cards_listId_fkey FOREIGN KEY ("listId")
+                        REFERENCES lists (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE,
+            CONSTRAINT cards_creatorId_fkey FOREIGN KEY ("creatorId")
+                        REFERENCES users (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE
         );
 
         CREATE TABLE "cardComments" (
             text VARCHAR(4000) NOT NULL,
-            "cardId" INTEGER REFERENCES cards(id) ON DELETE CASCADE ON UPDATE CASCADE,
-            "creatorId" INTEGER REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            "cardId" INTEGER,
+            "creatorId" INTEGER,
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            PRIMARY KEY ("creatorId", "cardId")
+            CONSTRAINT cardComments_creatorId_cardId_pkey PRIMARY KEY ("creatorId", "cardId"),
+            CONSTRAINT cardComments_cardId_fkey FOREIGN KEY ("cardId")
+                        REFERENCES cards (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE,
+            CONSTRAINT cardComments_creatorId_fkey FOREIGN KEY ("creatorId")
+                        REFERENCES users (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE
         );
 
         CREATE TABLE "cardAttachments" (
             id SERIAL NOT NULL,
             url VARCHAR(1000) NOT NULL,
-            "cardId" INTEGER REFERENCES cards(id) ON DELETE CASCADE ON UPDATE CASCADE,
+            "cardId" INTEGER,
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            PRIMARY KEY (id)
+            CONSTRAINT cardAttachments_id_pkey PRIMARY KEY (id),
+            CONSTRAINT cardAttachments_cardId_fkey FOREIGN KEY ("cardId")
+                        REFERENCES cards (id)
+                        ON DELETE CASCADE ON UPDATE CASCADE
         );
     `);
 }
