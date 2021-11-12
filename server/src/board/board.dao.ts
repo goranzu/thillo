@@ -1,3 +1,4 @@
+import { buildUpdateQuery } from "../common/utils";
 import pool from "../db/pool";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
 
@@ -58,40 +59,15 @@ async function findBoardByMemberId(
   return board?.rows[0];
 }
 
-async function update(data: UpdateBoardDto): Promise<Board | undefined> {
-  let query = ["UPDATE boards SET"];
+async function update(
+  data: UpdateBoardDto,
+  conditions: { id: number; creatorId: number },
+): Promise<Board | undefined> {
+  // Filter out null of undefined
 
-  const filteredData = Object.entries(data).reduce(
-    (prev: Record<string, any>, [key, value]) => {
-      if (value) {
-        prev[key] = value;
-      }
-      return prev;
-    },
-    {},
-  );
+  const q = buildUpdateQuery(data, conditions);
 
-  const set = Object.keys(filteredData)
-    .map((val, i) => {
-      return `"${val}" = $${i + 1}`;
-    })
-    .join(", ");
-
-  query = [...query, set];
-
-  console.log(query);
-
-  const board = await pool.query(
-    `
-        UPDATE boards
-        SET name = $1,
-            "isPrivate" = $2,
-            description = $3,
-            "updatedAt" = NOW()
-        WHERE id = $4 AND "creatorId" = $5;
-    `,
-    [data.name, data.isPrivate, data.description, data.boardId, data.creatorId],
-  );
+  const board = await pool.query((q.query += " RETURNING *"), q.values);
 
   return board?.rows[0];
 }

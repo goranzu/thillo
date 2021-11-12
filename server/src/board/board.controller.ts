@@ -27,13 +27,15 @@ const getById: Controller = async (req, res) => {
 const updateBoard: Controller = async (req, res) => {
   const creatorId = res.locals.user.id;
   const { boardId, name, description, isPrivate } = req.body;
-  const board = await boardService.updateBoard({
-    creatorId,
+  const board = await boardService.updateBoard(
+    {
+      name,
+      description,
+      isPrivate,
+    },
     boardId,
-    name,
-    description,
-    isPrivate,
-  });
+    creatorId,
+  );
   res.status(200).json({ data: board });
 };
 

@@ -9,10 +9,10 @@ export interface CreateBoardDto {
   description?: string;
 }
 
-export interface UpdateBoardDto extends Partial<CreateBoardDto> {
-  creatorId: number;
+export interface UpdateBoardDto {
+  name?: string;
+  description?: string;
   isPrivate?: boolean;
-  boardId: number;
 }
 
 async function listUsersBoards(userId: number): Promise<boardDao.Board[]> {
@@ -50,8 +50,12 @@ async function findBoardIfMember(
   return board;
 }
 
-async function updateBoard(data: UpdateBoardDto): Promise<boardDao.Board> {
-  const board = await boardDao.update(data);
+async function updateBoard(
+  data: UpdateBoardDto,
+  boardId: number,
+  creatorId: number,
+): Promise<boardDao.Board> {
+  const board = await boardDao.update(data, { id: boardId, creatorId });
   if (!board) {
     throw new NotFoundError();
   }
