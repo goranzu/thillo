@@ -25,9 +25,9 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            CONSTRAINT boards_name_creatorId_key UNIQUE (name, "creatorId"),
+            CONSTRAINT "boards_name_creatorId_key" UNIQUE (name, "creatorId"),
             CONSTRAINT boards_id_pkey PRIMARY KEY (id),
-            CONSTRAINT boards_creatorId_fkey FOREIGN KEY ("creatorId")
+            CONSTRAINT "boards_creatorId_fkey" FOREIGN KEY ("creatorId")
                         REFERENCES users (id)
                         ON DELETE CASCADE ON UPDATE CASCADE
         );
@@ -41,12 +41,12 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            CONSTRAINT lists_name_boardId_key UNIQUE (name, "boardId"),
+            CONSTRAINT "lists_name_boardId_key" UNIQUE (name, "boardId"),
             CONSTRAINT lists_id_pkey PRIMARY KEY (id),
-            CONSTRAINT lists_creatorId_fkey FOREIGN KEY ("creatorId")
+            CONSTRAINT "lists_creatorId_fkey" FOREIGN KEY ("creatorId")
                         REFERENCES users (id)
                         ON DELETE CASCADE ON UPDATE CASCADE,
-            CONSTRAINT lists_boardId_fkey FOREIGN KEY ("boardId")
+            CONSTRAINT "lists_boardId_fkey" FOREIGN KEY ("boardId")
                         REFERENCES boards (id)
                         ON DELETE CASCADE ON UPDATE CASCADE
         );
@@ -57,11 +57,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            CONSTRAINT boardMembers_memberId_boardId_pkey PRIMARY KEY ("memberId", "boardId"),
-            CONSTRAINT boardMembers_boardId_fkey FOREIGN KEY ("boardId")
+            CONSTRAINT "boardMembers_memberId_boardId_pkey" PRIMARY KEY ("memberId", "boardId"),
+            CONSTRAINT "boardMembers_boardId_fkey" FOREIGN KEY ("boardId")
                         REFERENCES boards (id)
                         ON DELETE CASCADE ON UPDATE CASCADE,
-            CONSTRAINT  boardMembers_memberId_fkey FOREIGN KEY ("memberId")
+            CONSTRAINT  "boardMembers_memberId_fkey" FOREIGN KEY ("memberId")
                         REFERENCES users (id)
                         ON DELETE CASCADE ON UPDATE CASCADE
         );
@@ -77,10 +77,10 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
             CONSTRAINT cards_id_pkey PRIMARY KEY (id),
-            CONSTRAINT cards_listId_fkey FOREIGN KEY ("listId")
+            CONSTRAINT "cards_listId_fkey" FOREIGN KEY ("listId")
                         REFERENCES lists (id)
                         ON DELETE CASCADE ON UPDATE CASCADE,
-            CONSTRAINT cards_creatorId_fkey FOREIGN KEY ("creatorId")
+            CONSTRAINT "cards_creatorId_fkey" FOREIGN KEY ("creatorId")
                         REFERENCES users (id)
                         ON DELETE CASCADE ON UPDATE CASCADE
         );
@@ -92,11 +92,11 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            CONSTRAINT cardComments_creatorId_cardId_pkey PRIMARY KEY ("creatorId", "cardId"),
-            CONSTRAINT cardComments_cardId_fkey FOREIGN KEY ("cardId")
+            CONSTRAINT "cardComments_creatorId_cardId_pkey" PRIMARY KEY ("creatorId", "cardId"),
+            CONSTRAINT "cardComments_cardId_fkey" FOREIGN KEY ("cardId")
                         REFERENCES cards (id)
                         ON DELETE CASCADE ON UPDATE CASCADE,
-            CONSTRAINT cardComments_creatorId_fkey FOREIGN KEY ("creatorId")
+            CONSTRAINT "cardComments_creatorId_fkey" FOREIGN KEY ("creatorId")
                         REFERENCES users (id)
                         ON DELETE CASCADE ON UPDATE CASCADE
         );
@@ -108,8 +108,8 @@ export async function up(pgm: MigrationBuilder): Promise<void> {
             "createdAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-            CONSTRAINT cardAttachments_id_pkey PRIMARY KEY (id),
-            CONSTRAINT cardAttachments_cardId_fkey FOREIGN KEY ("cardId")
+            CONSTRAINT "cardAttachments_id_pkey" PRIMARY KEY (id),
+            CONSTRAINT "cardAttachments_cardId_fkey" FOREIGN KEY ("cardId")
                         REFERENCES cards (id)
                         ON DELETE CASCADE ON UPDATE CASCADE
         );
