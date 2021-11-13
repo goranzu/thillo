@@ -24,6 +24,10 @@ function errorHandler(
         statusCode = 400;
         message = "This email is already registred.";
         break;
+      case "boards_name_creatorId_key":
+        statusCode = 400;
+        message = "Board with this name already exists.";
+        break;
     }
   }
 
