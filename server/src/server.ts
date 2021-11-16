@@ -1,5 +1,3 @@
-// import http from "http";
-
 import express from "express";
 import "express-async-errors";
 import session from "express-session";
@@ -16,18 +14,10 @@ import authRouter from "./auth/auth.routes";
 import userRouter from "./user/user.routes";
 import boardRouter from "./board/board.routes";
 import listRouter from "./list/list.routes";
-// import { CommonRoutesConfig } from "./common/common.routes.config";
-// import { AuthRoutes } from "./auth/auth.routes";
-// import { UserRoutes } from "./user/user.routes";
-// import { BoardRoutes } from "./board/board.routes";
-// import ListRoutes from "./list/list.routes";
 import * as authMiddleware from "./auth/auth.middleware";
 import pool from "./db/pool";
 
 const app = express();
-// const server = http.createServer(app);
-// const routes: CommonRoutesConfig[] = [];
-// const logger = debug("app");
 
 const RedisStore = connectRedis(session);
 
