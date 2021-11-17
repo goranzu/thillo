@@ -21,18 +21,46 @@ async function insertUsers(): Promise<void> {
       password: faker.internet.password(),
     };
 
-    await pool.query(
+    const boardName = faker.name.title();
+    const dbUser = await pool.query(
       `
             INSERT INTO users ("firstName", "lastName", email, password)
-            VALUES ($1, $2, $3, $4);
+            VALUES ($1, $2, $3, $4)
+            RETURNING id;
         `,
       [user.firstName, user.lastName, user.email, user.password],
     );
+
+    const dbUserId = dbUser?.rows[0].id;
+
+    const board = await pool.query(
+      `
+        INSERT INTO boards (name, "creatorId")
+        VALUES ($1, $2)
+        RETURNING id;
+    `,
+      [boardName, dbUserId],
+    );
+
+    const boardId = board?.rows[0].id;
+
+    const lists = await pool.query(
+      `
+        INSERT INTO lists (name, "creatorId", "boardId")
+        VALUES
+        ('te doen', $1, $2),
+        ('bezig', $1, $2),
+        ('klaar', $1, $2);
+    `,
+      [dbUserId, boardId],
+    );
   }
-  await pool.query(
+
+  const user = await pool.query(
     `
           INSERT INTO users ("firstName", "lastName", email, password)
-          VALUES ($1, $2, $3, $4);
+          VALUES ($1, $2, $3, $4)
+          RETURNING id;
       `,
     [testUser.firstName, testUser.lastName, testUser.email, testUser.password],
   );
