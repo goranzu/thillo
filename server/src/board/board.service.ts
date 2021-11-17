@@ -38,10 +38,10 @@ async function create(data: CreateBoardDto): Promise<boardDao.Board> {
 }
 
 async function findBoardIfMember(
-  memberId: number,
+  creatorId: number,
   boardId: number,
 ): Promise<boardDao.Board> {
-  const board = await boardDao.findBoardByMemberId(memberId, boardId);
+  const board = await boardDao.findBoardByMemberId(creatorId, boardId);
 
   if (board == null) {
     throw new NotFoundError("Board not found.");

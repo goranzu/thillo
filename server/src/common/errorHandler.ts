@@ -13,6 +13,7 @@ function errorHandler(
   res: Response,
   _next: NextFunction,
 ): void {
+  console.log(err);
   console.log(err.constraint);
   let statusCode = err.statusCode || 500;
   let message = err.message || "Something went wrong...";

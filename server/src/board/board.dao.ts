@@ -42,30 +42,61 @@ async function create(data: CreateBoardDto): Promise<Board | undefined> {
 }
 
 async function findBoardByMemberId(
-  memberId: number,
+  creatorId: number,
   boardId: number,
 ): Promise<Board | undefined> {
   //   Finds board if logged in user is the creator or a member
 
   const databaseBoards = await pool.query(
     `
-      SELECT id, name, "isPrivate", description, "creatorId", "createdAt", "updatedAt"
-      FROM boards
-      WHERE "creatorId" = $1 AND id = $2;
-    `,
-    [memberId, boardId],
-  );
-
-  const lists = await pool.query(
-    `
-      SELECT id, name, description, "createdAt", "updatedAt" FROM lists WHERE "boardId" = $1;
+        SELECT
+            b.id "boardId",
+            b.name "boardName",
+            u.id "memberId",
+            u."firstName",
+            u."lastName",
+            u2.id "creatorId",
+            u2."firstName" "creatorFirstName",
+            u2."firstName" "creatorLastName"
+        FROM
+            "boards" b
+            LEFT JOIN "boardMembers" bm ON bm."boardId" = $1
+            LEFT JOIN "users" u ON u.id = bm."memberId"
+            LEFT JOIN "users" u2 ON u2.id = b."creatorId"
+        WHERE
+            b.id = $1;
     `,
     [boardId],
   );
 
-  const board = databaseBoards?.rows[0];
-  board.lists = lists?.rows;
-  console.log(lists?.rows);
+  //   const lists = await pool.query(
+  //     `
+  //       SELECT id, name, description, "createdAt", "updatedAt" FROM lists WHERE "boardId" = $1;
+  //       `,
+  //     [boardId],
+  //   );
+  //   const board = databaseBoards?.rows.reduce(
+  //     (prev: Record<string, any>, acc) => {
+  //       prev.id = acc.boardId;
+  //       prev.name = acc.boardName;
+  //       prev.creatorId = acc.creatorId;
+  //       prev.creatorFirstName = acc.creatorFirstName;
+  //       prev.creatorLastName = acc.creatorLastName;
+  //       prev.members = [];
+  //       if (acc.memberId) {
+  //         prev.members.push({
+  //           id: acc.memberId,
+  //           firstName: acc.firstName,
+  //           lastName: acc.lastName,
+  //         });
+  //       }
+  //       return acc;
+  //     },
+  //     {},
+  //   );
+  const board = databaseBoards?.rows;
+  console.log(board);
+  //   board.lists = [];
 
   return board;
 }
