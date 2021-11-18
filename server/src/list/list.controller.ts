@@ -51,9 +51,9 @@ const updateList: Controller = async (req, res): Promise<void> => {
 };
 
 const deleteList: Controller = async (req, res): Promise<void> => {
-  const memberId = res.locals.user.id;
   const listId = Number(req.params.listId);
   const boardId = Number(req.query.boardId);
+  const memberId = res.locals.user.id;
 
   await listService.deleteList(boardId, listId, memberId);
 

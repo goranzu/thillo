@@ -60,7 +60,7 @@ const addMemberToBoard: Controller = async (req, res) => {
   const { id } = res.locals.user;
   const { email, boardId } = req.body;
 
-  await boardService.checkIfUserIsCreator(boardId, id);
+  await boardService.checkIfUserIsCreatorOfBoard(boardId, id);
 
   const board = await boardService.addMemberToBoard(boardId, email, id);
 
@@ -72,7 +72,7 @@ const removeMemberFromBoard: Controller = async (req, res) => {
   const { boardId, memberId } = req.body;
   const { id } = res.locals.user;
 
-  await boardService.checkIfUserIsCreator(boardId, id);
+  await boardService.checkIfUserIsCreatorOfBoard(boardId, id);
 
   if (id === memberId) {
     throw new BadUserInputError();

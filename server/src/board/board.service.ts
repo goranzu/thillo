@@ -74,7 +74,7 @@ async function addMemberToBoard(
   email: string,
   creatorId: number,
 ): Promise<boardDao.Board> {
-  await checkIfUserIsCreator(boardId, creatorId);
+  await checkIfUserIsCreatorOfBoard(boardId, creatorId);
 
   const newMember = await userSevice.findByEmail(email);
 
@@ -111,7 +111,7 @@ async function removeMember(
 //   }
 // }
 
-async function checkIfUserIsCreator(
+async function checkIfUserIsCreatorOfBoard(
   boardId: number,
   creatorId: number,
 ): Promise<void> {
@@ -130,5 +130,5 @@ export {
   addMemberToBoard,
   removeMember,
   //   userIsMember,
-  checkIfUserIsCreator,
+  checkIfUserIsCreatorOfBoard,
 };

@@ -67,8 +67,9 @@ async function updateList(data: PatchListDto) {
 }
 
 async function deleteList(boardId: number, listId: number, memberId: number) {
-  //   TODO this should throw
+  //   Only creator of board can delete lists
   //   await boardService.userIsMember(memberId, boardId);
+  await boardService.checkIfUserIsCreatorOfBoard(boardId, memberId);
   await listDao.deleteList(listId, boardId);
   return true;
 }
