@@ -1,13 +1,13 @@
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function NotFound() {
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <main>
       <p>Page not Found.</p>
       <p>
         Click{" "}
-        <Link to="#" onClick={history.goBack}>
+        <Link to="#" onClick={() => navigate(-1)}>
           here
         </Link>{" "}
         to go back.

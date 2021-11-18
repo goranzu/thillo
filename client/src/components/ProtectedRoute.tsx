@@ -1,4 +1,4 @@
-import { Route, Redirect } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function ProtectedRoute({
@@ -12,7 +12,8 @@ function ProtectedRoute({
   return authContext.authState.isAuthenticated ? (
     <Route {...rest}>{children}</Route>
   ) : (
-    <Redirect to="/" />
+    <Route {...rest} element={<Navigate replace to="/" />} />
+    // <Redirect to="/" />
   );
 }
 

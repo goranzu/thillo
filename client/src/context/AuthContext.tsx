@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { apiClient } from "../utils";
 
 interface AuthContextInterface {
@@ -28,7 +28,6 @@ interface MeResponse {
 const AuthContext = createContext<AuthContextInterface | null>(null);
 
 function AuthContextProvider({ children }: { children: React.ReactNode }) {
-  const history = useHistory();
   const [authState, setAuthState] = useState<{
     isAuthenticated: boolean;
     userInfo: { id: number; email: string } | null;
@@ -39,6 +38,7 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<
     "idle" | "loading" | "rejected" | "resolved"
   >("idle");
+  const navigate = useNavigate();
 
   const isLoading = status === "loading";
   const isError = status === "rejected";
@@ -49,7 +49,8 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
     try {
       await apiClient.delete(`/auth/logout`);
       setAuthState({ isAuthenticated: false, userInfo: null });
-      history.push("/signin");
+      // TODO: Redirect user on logout
+      navigate("/");
     } catch (err) {
       //   console.error(err);
       alert("Something went wrong with logging out.");

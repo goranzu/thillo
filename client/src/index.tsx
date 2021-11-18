@@ -15,9 +15,9 @@ ReactDOM.render(
     <Router>
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
-        <AuthContextProvider>
-          <App />
-        </AuthContextProvider>
+        {/* <AuthContextProvider> */}
+        <App />
+        {/* </AuthContextProvider> */}
       </QueryClientProvider>
     </Router>
   </React.StrictMode>,
