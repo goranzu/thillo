@@ -8,6 +8,7 @@ import ForgotPassword from "./screens/ForgotPassword";
 import ResetPassword from "./screens/ResetPassword";
 import { globalStyles } from "./styles/global";
 import { useAuth } from "./context/AuthContext";
+import Dashboard from "./screens/Dashboard";
 
 function App() {
   //   const authContext = useAuth();
@@ -26,6 +27,7 @@ function App() {
         <Route path="/signin" element={<Signin />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
