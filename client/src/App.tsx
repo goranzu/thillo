@@ -7,8 +7,8 @@ import NotFound from "./components/NotFound";
 import ForgotPassword from "./screens/ForgotPassword";
 import ResetPassword from "./screens/ResetPassword";
 import { globalStyles } from "./styles/global";
-import { useAuth } from "./context/AuthContext";
 import Dashboard from "./screens/Dashboard";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
   //   const authContext = useAuth();
@@ -21,13 +21,19 @@ function App() {
     <>
       <Global styles={globalStyles} />
       <Routes>
-        <Route path="/" element={<App />} />
-        <Route index element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
