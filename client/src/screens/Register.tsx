@@ -15,25 +15,32 @@ import AuthFormHeader from "../components/AuthFormHeader";
 import { formatError } from "../utils";
 import FormErrorMessage from "../components/styled/FormErrorMessage.styled";
 
-function Signup() {
+function Register() {
   const signupMutation = useSignup();
 
-  const errors = formatError<{ email?: string; password?: string }>(
-    signupMutation.error,
-  );
+  const errors = formatError<{
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    password?: string;
+  }>(signupMutation.error);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const target = e.target as typeof e.target & {
+      firstName: { value: string };
+      lastName: { value: string };
       email: { value: string };
       password: { value: string };
     };
+    const firstName = target.firstName.value;
+    const lastName = target.lastName.value;
     const email = target.email.value;
     const password = target.password.value;
-    if (!email || !password) {
+    if (!email || !password || !firstName || !lastName) {
       return;
     }
-    signupMutation.mutate({ email, password });
+    signupMutation.mutate({ email, password, firstName, lastName });
   }
 
   return (
@@ -42,8 +49,41 @@ function Signup() {
       imageUrl={signupImage}
       backgroundColor={colors.accent_100}
     >
-      <AuthFormHeader text="Sign Up" />
+      <AuthFormHeader text="Register" />
       <Fieldset disabled={signupMutation.isLoading}>
+        <div
+          css={{
+            display: "flex",
+            gap: "1rem",
+          }}
+        >
+          <FormGroup>
+            <Label htmlFor="firstName">First Name</Label>
+            <InputStyled
+              required
+              isError={Boolean(errors.firstName)}
+              type="text"
+              name="firstName"
+              id="firstName"
+            />
+            {Boolean(errors.firstName) && (
+              <FormErrorMessage>{errors.firstName}</FormErrorMessage>
+            )}
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="lastName">Last Name</Label>
+            <InputStyled
+              required
+              isError={Boolean(errors.lastName)}
+              type="text"
+              name="lastName"
+              id="lastName"
+            />
+            {Boolean(errors.lastName) && (
+              <FormErrorMessage>{errors.lastName}</FormErrorMessage>
+            )}
+          </FormGroup>
+        </div>
         <FormGroup>
           <Label htmlFor="email">Email</Label>
           <InputStyled
@@ -85,4 +125,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Register;

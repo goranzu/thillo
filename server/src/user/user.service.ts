@@ -10,7 +10,9 @@ import * as emailService from "../common/services/email.service";
 import { User, UserWithoutPassword } from "../common/types";
 import { generateToken } from "../common/generateToken";
 
-async function signUp(data: CreateDto): Promise<{ id: number; email: string }> {
+async function signUp(
+  data: CreateDto,
+): Promise<{ id: number; email: string; name: string }> {
   const hashedPassword = await hashPassword(data.password);
   const user = await userDao.create({
     ...data,
@@ -21,7 +23,7 @@ async function signUp(data: CreateDto): Promise<{ id: number; email: string }> {
     throw new Error("Something went wrong.");
   }
 
-  return { id: user.user_id, email: user.email };
+  return { id: user.user_id, email: user.email, name: user.fullName() };
 }
 
 interface BaseUser {

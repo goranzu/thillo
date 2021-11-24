@@ -47,7 +47,7 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
 
   async function logout() {
     try {
-      await apiClient.delete(`/auth/logout`);
+      await apiClient.delete(`/logout`);
       setAuthState({ isAuthenticated: false, userInfo: null });
       // TODO: Redirect user on logout
       navigate("/");

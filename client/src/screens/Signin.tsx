@@ -81,7 +81,7 @@ function Signin() {
         </ButtonStyled>
         <p css={{ fontSize: "var(--fs-300)" }}>
           Don't have an account yet?{" "}
-          <LinkStyled to="/signup" isLoading={signinMutation.isLoading}>
+          <LinkStyled to="/register" isLoading={signinMutation.isLoading}>
             Sign Up.
           </LinkStyled>
         </p>

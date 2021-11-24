@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { apiClient } from "../utils";
 
-interface Response {
+export interface SignResponse {
   data: {
     id: number;
+    name: string;
     email: string;
-    createdAt: Date;
-    updatedAt: Date;
   };
 }
+export interface RegisterResponse extends SignResponse {}
 
 export interface Error {
   message: string;
@@ -27,10 +27,10 @@ export interface ErrorResponse {
 function useSignup() {
   const navigate = useNavigate();
   return useMutation<
-    AxiosResponse<Response>,
+    AxiosResponse<RegisterResponse>,
     AxiosError<ErrorResponse>,
-    { email: string; password: string }
-  >((data) => apiClient.post(`/auth/signup`, data), {
+    { email: string; password: string; firstName: string; lastName: string }
+  >((data) => apiClient.post(`/signup`, data), {
     onSuccess: () => {
       setTimeout(() => {
         navigate("/signin");
@@ -43,12 +43,13 @@ function useSignin() {
   const navigate = useNavigate();
   //   const { updateAuthState } = useAuth();
   return useMutation<
-    AxiosResponse<Response>,
+    AxiosResponse<SignResponse>,
     AxiosError<ErrorResponse>,
     { email: string; password: string }
-  >((data) => apiClient.post(`/auth/signin`, data), {
+  >((data) => apiClient.post(`/signin`, data), {
     onSuccess: (response) => {
       const { data } = response.data;
+      console.log(data);
       //   updateAuthState(data.id, data.email);
       setTimeout(() => {
         navigate("/dashboard");
@@ -62,7 +63,7 @@ function useForgotPassword() {
     AxiosResponse<null>,
     AxiosError<ErrorResponse>,
     { email: string }
-  >((data) => apiClient.post(`/auth/forgot-password`, data), {
+  >((data) => apiClient.post(`/forgot-password`, data), {
     onSuccess: () => {
       alert("Instructions sent. Check your email.");
     },
@@ -74,7 +75,7 @@ function useResetPassword() {
     AxiosResponse<null>,
     AxiosError<ErrorResponse>,
     { password: string; token: string }
-  >((data) => apiClient.post(`/auth/reset-password`, data), {
+  >((data) => apiClient.post(`/reset-password`, data), {
     onSuccess: () => {
       alert("Password reset. You can login with your new password");
     },

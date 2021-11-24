@@ -1,7 +1,7 @@
 import { Global } from "@emotion/react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./screens/Home";
-import Signup from "./screens/Signup";
+import Register from "./screens/Register";
 import Signin from "./screens/Signin";
 import NotFound from "./components/NotFound";
 import ForgotPassword from "./screens/ForgotPassword";
@@ -22,7 +22,7 @@ function App() {
       <Global styles={globalStyles} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
