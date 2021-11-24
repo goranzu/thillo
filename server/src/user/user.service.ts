@@ -10,7 +10,7 @@ import * as emailService from "../common/services/email.service";
 import { User, UserWithoutPassword } from "../common/types";
 import { generateToken } from "../common/generateToken";
 
-async function signUp(data: CreateDto): Promise<Pick<User, "id" | "email">> {
+async function signUp(data: CreateDto): Promise<{ id: number; email: string }> {
   const hashedPassword = await hashPassword(data.password);
   const user = await userDao.create({
     ...data,
@@ -21,13 +21,16 @@ async function signUp(data: CreateDto): Promise<Pick<User, "id" | "email">> {
     throw new Error("Something went wrong.");
   }
 
-  return user;
+  return { id: user.user_id, email: user.email };
 }
 
-async function signIn(
-  email: string,
-  password: string,
-): Promise<UserWithoutPassword> {
+interface BaseUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+async function signIn(email: string, password: string): Promise<BaseUser> {
   const user = await userDao.findByEmail(email);
 
   if (user == null) {
@@ -45,8 +48,8 @@ async function signIn(
   }
 
   return {
-    id: user.id,
-    name: `${user.firstName} ${user.lastName}`,
+    id: user.user_id,
+    name: user.fullName(),
     email: user.email,
   };
 }
@@ -64,7 +67,7 @@ async function forgotPassword(email: string): Promise<void> {
 
   await redisClient.set(
     `${prefixes.FORGOT_PASSWORD}${token}`,
-    user.id,
+    user.user_id,
     "ex",
     1000 * 60 * 60 * 3,
   );
@@ -85,39 +88,43 @@ async function resetPassword(password: string, token: string): Promise<void> {
 
   const hashedPassword = await hashPassword(password);
 
-  await userDao.updatePassword(Number(userId), {
-    password: hashedPassword,
-  });
+  await userDao.updatePassword(Number(userId), hashedPassword);
 
   await redisClient.del(redisKey);
 
   return;
 }
 
-async function findByEmail(email: string): Promise<UserWithoutPassword> {
+async function findByEmail(email: string): Promise<BaseUser> {
   const user = await userDao.findByEmail(email);
   if (user == null) {
     throw new NotFoundError("User not found.");
   }
 
   return {
-    id: user.id,
+    id: user.user_id,
     email: user.email,
-    name: `${user.firstName} ${user.lastName}`,
+    name: user.fullName(),
   };
 }
 
 async function listAllUsers(
   limit?: number,
   page?: number,
-): Promise<UserWithoutPassword[]> {
+): Promise<BaseUser[]> {
   const users = await userDao.findMany(limit, page);
 
   if (users == null) {
     throw new Error();
   }
 
-  return users;
+  return users.map((user) => {
+    return {
+      id: user.user_id,
+      email: user.email,
+      name: user.fullName(),
+    };
+  });
 }
 
 export {

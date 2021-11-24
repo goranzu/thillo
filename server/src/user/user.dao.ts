@@ -1,68 +1,41 @@
-import { User, UserWithoutPassword } from "../common/types";
-import pool from "../db/pool";
 import { CreateDto } from "./dto/create.dto";
+import UserModel from "./user.model";
 
 class UserDao {
-  static async create(
-    data: CreateDto,
-  ): Promise<Pick<User, "id" | "email"> | undefined> {
-    const result = await pool.query(
-      `
-            INSERT INTO users ("email", "firstName", "lastName", "password")
-            VALUES ($1, $2, $3, $4)
-            RETURNING "id", "email";
-        `,
-      [data.email, data.firstName, data.lastName, data.password],
-    );
-
-    return result?.rows[0];
+  static async create(data: CreateDto): Promise<UserModel> {
+    const user = await UserModel.query().insert({
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email: data.email,
+      password: data.password,
+    });
+    return user;
   }
 
-  static async findByEmail(email: string): Promise<User | undefined> {
-    const result = await pool.query(
-      `
-        SELECT id, "firstName", "lastName", email, password
-        FROM users
-        WHERE email = $1;
-    `,
-      [email],
-    );
-
-    return result?.rows[0];
+  static async findByEmail(email: string): Promise<UserModel | undefined> {
+    const user = await UserModel.query().findOne("email", "=", email);
+    return user;
   }
 
   static async updatePassword(
     id: number,
-    data: { password: string },
-  ): Promise<Pick<User, "id" | "email"> | undefined> {
-    const result = await pool.query(
-      `
-        UPDATE users
-        SET password = $2
-        WHERE id = $1
-        RETURNING id, email;
-      `,
-      [id, data.password],
-    );
-
-    return result?.rows[0];
+    password: string,
+    // data: { password: string },
+  ): Promise<UserModel> {
+    const user = await UserModel.query()
+      .findById(id)
+      .patch({ password })
+      .returning("*");
+    return user[0];
   }
 
-  static async findMany(
-    limit = 25,
-    page = 0,
-  ): Promise<UserWithoutPassword[] | undefined> {
-    const results = await pool.query(
-      `
-        SELECT id, email, "firstName", "lastName", email
-        FROM users
-        ORDER BY "createdAt",
-        LIMIT $1 OFFSET $2;
-      `,
-      [limit, page],
-    );
+  static async findMany(limit = 25, page = 0): Promise<UserModel[]> {
+    const users = await UserModel.query()
+      .limit(limit)
+      .offset(page)
+      .orderBy("created_at", "DESC");
 
-    return results?.rows;
+    return users;
   }
 }
 
