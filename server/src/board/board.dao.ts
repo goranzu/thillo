@@ -1,6 +1,8 @@
 import { buildUpdateQuery } from "../common/utils";
 import pool from "../db/pool";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
+import BoardModel from "./board.model";
+import UserModel from "../user/user.model";
 
 export interface Board {
   id: number;
@@ -12,93 +14,34 @@ export interface Board {
   updatedAt?: string;
 }
 
-async function list(userId: number): Promise<Board[] | undefined> {
-  const boards = await pool.query(
-    `
-        SELECT id, name, "isPrivate", description
-        FROM boards
-        WHERE "creatorId" = $1
-        ORDER BY "createdAt" DESC;
-    `,
-    [userId],
-  );
-
-  return boards?.rows;
+async function list(userId: number): Promise<BoardModel[] | undefined> {
+  const boards = await BoardModel.query()
+    .select("*")
+    .where("creator_id", "=", userId)
+    .orderBy("created_at", "DESC");
+  return boards;
 }
 
-async function create(data: CreateBoardDto): Promise<Board | undefined> {
-  //   Also add an entry in the board_members table?
+async function create(data: CreateBoardDto): Promise<BoardModel> {
+  const board = await BoardModel.query().insert({
+    name: data.name,
+    description: data.description,
+    creator_id: data.creatorId,
+  });
 
-  const board = await pool.query(
-    `
-        INSERT INTO boards (name, description, "creatorId")
-        VALUES ($1, $2, $3)
-        RETURNING *;
-    `,
-    [data.name, data.description, data.creatorId],
-  );
-
-  return board?.rows[0];
+  return board;
 }
 
 async function findBoardByMemberId(
   creatorId: number,
   boardId: number,
-): Promise<Board | undefined> {
+): Promise<BoardModel[]> {
   //   Finds board if logged in user is the creator or a member
+  const boards = await UserModel.relatedQuery<BoardModel>("boards")
+    .for(creatorId)
+    .orderBy("created_at");
 
-  const databaseBoards = await pool.query(
-    `
-        SELECT
-            b.id "boardId",
-            b.name "boardName",
-            u.id "memberId",
-            u."firstName",
-            u."lastName",
-            u2.id "creatorId",
-            u2."firstName" "creatorFirstName",
-            u2."firstName" "creatorLastName"
-        FROM
-            "boards" b
-            LEFT JOIN "boardMembers" bm ON bm."boardId" = $1
-            LEFT JOIN "users" u ON u.id = bm."memberId"
-            LEFT JOIN "users" u2 ON u2.id = b."creatorId"
-        WHERE
-            b.id = $1;
-    `,
-    [boardId],
-  );
-
-  //   const lists = await pool.query(
-  //     `
-  //       SELECT id, name, description, "createdAt", "updatedAt" FROM lists WHERE "boardId" = $1;
-  //       `,
-  //     [boardId],
-  //   );
-  //   const board = databaseBoards?.rows.reduce(
-  //     (prev: Record<string, any>, acc) => {
-  //       prev.id = acc.boardId;
-  //       prev.name = acc.boardName;
-  //       prev.creatorId = acc.creatorId;
-  //       prev.creatorFirstName = acc.creatorFirstName;
-  //       prev.creatorLastName = acc.creatorLastName;
-  //       prev.members = [];
-  //       if (acc.memberId) {
-  //         prev.members.push({
-  //           id: acc.memberId,
-  //           firstName: acc.firstName,
-  //           lastName: acc.lastName,
-  //         });
-  //       }
-  //       return acc;
-  //     },
-  //     {},
-  //   );
-  const board = databaseBoards?.rows;
-  console.log(board);
-  //   board.lists = [];
-
-  return board;
+  return boards;
 }
 
 async function update(

@@ -2,6 +2,7 @@ import { NotFoundError, UnauthorizedError } from "../common/errors";
 import * as listService from "../list/list.service";
 import * as userSevice from "../user/user.service";
 import * as boardDao from "./board.dao";
+import BoardModel from "./board.model";
 
 export interface CreateBoardDto {
   creatorId: number;
@@ -15,7 +16,7 @@ export interface UpdateBoardDto {
   isPrivate?: boolean;
 }
 
-async function listUsersBoards(userId: number): Promise<boardDao.Board[]> {
+async function listUsersBoards(userId: number): Promise<BoardModel[]> {
   const boards = await boardDao.list(userId);
 
   if (!boards) {
@@ -25,14 +26,14 @@ async function listUsersBoards(userId: number): Promise<boardDao.Board[]> {
   return boards;
 }
 
-async function create(data: CreateBoardDto): Promise<boardDao.Board> {
+async function create(data: CreateBoardDto): Promise<BoardModel> {
   const board = await boardDao.create(data);
 
   if (!board) {
     throw new Error();
   }
 
-  await listService.createDefaultLists(board.id, data.creatorId);
+  //   await listService.createDefaultLists(board.id, data.creatorId);
 
   return board;
 }

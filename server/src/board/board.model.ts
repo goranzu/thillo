@@ -7,7 +7,7 @@ export default class BoardModel extends Model {
   name!: string;
   is_private?: boolean;
   description?: string;
-  creator_id!: string;
+  creator_id!: number;
 
   static get tableName(): string {
     return "boards";
