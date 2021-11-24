@@ -4,6 +4,8 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import morgan from "morgan";
 import cors from "cors";
+import Knex from "knex";
+import { Model } from "objection";
 // import debug from "debug";
 
 import appConfig from "./config";
@@ -16,8 +18,12 @@ import boardRouter from "./board/board.routes";
 import listRouter from "./list/list.routes";
 import * as authMiddleware from "./auth/auth.middleware";
 import pool from "./db/pool";
+import knexConfig from "../knexfile";
 
 const app = express();
+const knex = Knex(knexConfig.development);
+
+Model.knex(knex);
 
 const RedisStore = connectRedis(session);
 
