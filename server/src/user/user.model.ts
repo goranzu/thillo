@@ -1,4 +1,6 @@
 import { Model } from "objection";
+import BoardModel from "../board/board.model";
+import ListModel from "../list/list.model";
 
 export default class UserModel extends Model {
   user_id!: number;
@@ -19,6 +21,25 @@ export default class UserModel extends Model {
     return `${this.first_name} ${this.last_name}`;
   }
 
+  static relationMappings = {
+    boards: {
+      relation: Model.HasManyRelation,
+      modelClass: BoardModel,
+      join: {
+        from: "users.user_id",
+        to: "boards.creator_id",
+      },
+      lists: {
+        relation: Model.HasManyRelation,
+        modelClass: ListModel,
+        join: {
+          from: "users.user_id",
+          to: "lists.creator_id",
+        },
+      },
+    },
+  };
+
   static jsonSchema = {
     type: "object",
     required: ["first_name", "last_name", "email", "password"],
@@ -29,15 +50,6 @@ export default class UserModel extends Model {
       last_name: { type: "string", minLength: 1, maxLength: 254 },
       email: { type: "string", minLength: 1, maxLength: 254 },
       password: { type: "string", minLength: 1, maxLength: 500 },
-
-      address: {
-        type: "object",
-        properties: {
-          street: { type: "string" },
-          city: { type: "string" },
-          zipCode: { type: "string" },
-        },
-      },
     },
   };
 }

@@ -20,7 +20,6 @@ class UserDao {
   static async updatePassword(
     id: number,
     password: string,
-    // data: { password: string },
   ): Promise<UserModel> {
     const user = await UserModel.query()
       .findById(id)
