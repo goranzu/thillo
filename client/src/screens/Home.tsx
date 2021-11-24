@@ -13,8 +13,8 @@ const nav = [
     variant: "outline",
   },
   {
-    name: "Signup",
-    path: "/signup",
+    name: "Register",
+    path: "/register",
     variant: undefined,
   },
 ] as const;
@@ -24,42 +24,49 @@ function Home() {
     <>
       <header
         css={{
-          padding: `0.75rem ${styleVariables.globalPadding}`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          padding: `1.25rem ${styleVariables.globalPadding}`,
           boxShadow: styleVariables.boxShadow,
         }}
       >
-        <p
+        <div
           css={{
-            fontWeight: 600,
-            marginBottom: "-10px",
-            ...styleVariables.flexCenter,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            maxWidth: styleVariables.pageWidth,
+            marginLeft: "auto",
+            marginRight: "auto",
           }}
         >
-          <Logo />
-        </p>
-        <nav
-          css={{
-            "> a + a": {
-              marginLeft: "1rem",
-            },
-          }}
-        >
-          {nav.map((item) => {
-            return (
-              <ButtonLink
-                css={{ textDecoration: "none" }}
-                key={item.name}
-                to={item.path}
-                variant={item.variant}
-              >
-                {item.name}
-              </ButtonLink>
-            );
-          })}
-        </nav>
+          <p
+            css={{
+              fontWeight: 600,
+              ...styleVariables.flexCenter,
+            }}
+          >
+            <Logo />
+          </p>
+          <nav
+            css={{
+              "> a + a": {
+                marginLeft: "2rem",
+              },
+            }}
+          >
+            {nav.map((item) => {
+              return (
+                <ButtonLink
+                  css={{ textDecoration: "none" }}
+                  key={item.name}
+                  to={item.path}
+                  variant={item.variant}
+                >
+                  {item.name}
+                </ButtonLink>
+              );
+            })}
+          </nav>
+        </div>
       </header>
       <main
         css={{
@@ -123,7 +130,7 @@ function Home() {
           </p>
           <ButtonLink
             css={{ paddingLeft: "2em", paddingRight: "2em" }}
-            to="/signup"
+            to="/register"
           >
             Get Started
           </ButtonLink>

@@ -48,7 +48,7 @@ function AuthLayout({
           css={{
             textAlign: "center",
             marginTop: "125px",
-            maxWidth: "420px",
+            maxWidth: "440px",
             ...mAuto,
             "> * + *": {
               marginTop: "30px",
