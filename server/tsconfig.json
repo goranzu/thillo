@@ -1,6 +1,6 @@
 {
-  "extends": "@tsconfig/node14/tsconfig.json",
-  "include": ["src", ".env"],
+  "extends": "@tsconfig/node16/tsconfig.json",
+  "include": ["src", ".env", "seeds"],
   "compilerOptions": {
     "outDir": "dist",
     "sourceMap": true

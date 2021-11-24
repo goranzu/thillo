@@ -1,4 +1,5 @@
-import "dotenv";
+import dotenv from "dotenv";
+dotenv.config();
 import assert from "assert";
 import { PoolConfig } from "pg";
 

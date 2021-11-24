@@ -1,6 +1,6 @@
 import { AxiosError, AxiosResponse } from "axios";
 import { useMutation } from "react-query";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { apiClient } from "../utils";
 
@@ -25,7 +25,7 @@ export interface ErrorResponse {
 }
 
 function useSignup() {
-  const history = useHistory();
+  const navigate = useNavigate();
   return useMutation<
     AxiosResponse<Response>,
     AxiosError<ErrorResponse>,
@@ -33,15 +33,15 @@ function useSignup() {
   >((data) => apiClient.post(`/auth/signup`, data), {
     onSuccess: () => {
       setTimeout(() => {
-        history.push("/signin");
+        navigate("/signin");
       }, 1000);
     },
   });
 }
 
 function useSignin() {
-  const history = useHistory();
-  const { updateAuthState } = useAuth();
+  const navigate = useNavigate();
+  //   const { updateAuthState } = useAuth();
   return useMutation<
     AxiosResponse<Response>,
     AxiosError<ErrorResponse>,
@@ -49,9 +49,9 @@ function useSignin() {
   >((data) => apiClient.post(`/auth/signin`, data), {
     onSuccess: (response) => {
       const { data } = response.data;
-      updateAuthState(data.id, data.email);
+      //   updateAuthState(data.id, data.email);
       setTimeout(() => {
-        history.push("/dashboard");
+        navigate("/dashboard");
       }, 1000);
     },
   });

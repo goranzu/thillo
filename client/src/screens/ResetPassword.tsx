@@ -19,7 +19,7 @@ import FormErrorMessage from "../components/styled/FormErrorMessage.styled";
 
 function ResetPassword() {
   const resetPasswordMutation = useResetPassword();
-  const { token } = useParams<{ token: string }>();
+  const { token } = useParams();
 
   const errors = formatError<{ password?: string }>(
     resetPasswordMutation.error,

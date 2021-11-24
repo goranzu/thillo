@@ -2,21 +2,15 @@ import { Request, Response, NextFunction } from "express";
 
 export type Controller = (req: Request, res: Response) => Promise<any>;
 
-type User = {
-  id: number;
-  email: string;
-  name: string;
-};
-
 declare module "express-session" {
   interface Session {
-    user: User;
+    user: Pick<User, "id" | "email">;
   }
 }
 
 declare module "express-serve-static-core" {
   interface Request {
-    user: User;
+    user: Pick<User, "id" | "email">;
   }
 }
 
@@ -37,4 +31,18 @@ export interface FindList {
   listId: number;
   boardId: number;
   memberId: number;
+}
+
+export interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password?: string;
+  name?: string;
+}
+
+export interface UserWithoutPassword
+  extends Omit<User, "password" | "firstName" | "lastName"> {
+  name: string;
 }

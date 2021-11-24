@@ -1,8 +1,9 @@
 import { Controller } from "../common/types";
 import * as listService from "./list.service";
 
-const createList: Controller = async (req, res) => {
-  const { name, description, boardId } = req.body;
+const createList: Controller = async (req, res): Promise<void> => {
+  const { name, description } = req.body;
+  const boardId = Number(req.query.boardId);
   const creatorId = res.locals.user.id;
   const list = await listService.createList({
     name,
@@ -15,9 +16,10 @@ const createList: Controller = async (req, res) => {
   return;
 };
 
-const getListById: Controller = async (req, res) => {
+const getListById: Controller = async (req, res): Promise<void> => {
   const memberId = res.locals.user.id;
-  const { listId, boardId } = req.body;
+  const boardId = Number(req.query.boardId);
+  const listId = Number(req.params.listId);
 
   const list = await listService.getList({ memberId, boardId, listId });
 
@@ -30,9 +32,11 @@ const getListById: Controller = async (req, res) => {
   return;
 };
 
-const updateList: Controller = async (req, res) => {
+const updateList: Controller = async (req, res): Promise<void> => {
   const memberId = res.locals.user.id;
-  const { name, description, listId, boardId } = req.body;
+  const { name, description } = req.body;
+  const listId = Number(req.params.listId);
+  const boardId = Number(req.query.boardId);
 
   const list = await listService.updateList({
     boardId,
@@ -46,9 +50,10 @@ const updateList: Controller = async (req, res) => {
   return;
 };
 
-const deleteList: Controller = async (req, res) => {
+const deleteList: Controller = async (req, res): Promise<void> => {
+  const listId = Number(req.params.listId);
+  const boardId = Number(req.query.boardId);
   const memberId = res.locals.user.id;
-  const { listId, boardId } = req.body;
 
   await listService.deleteList(boardId, listId, memberId);
 
@@ -57,62 +62,3 @@ const deleteList: Controller = async (req, res) => {
 };
 
 export { createList, getListById, updateList, deleteList };
-
-// class ListController {
-//   createList: Controller = async (req, res) => {
-//     const { name, description, boardId } = req.body;
-//     const creatorId = res.locals.user.id;
-//     const list = await listService.createList({
-//       name,
-//       description,
-//       boardId,
-//       creatorId,
-//     });
-
-//     res.status(201).json({ data: list });
-//     return;
-//   };
-
-//   getListById: Controller = async (req, res) => {
-//     const memberId = res.locals.user.id;
-//     const { listId, boardId } = req.body;
-
-//     const list = await listService.getList({ memberId, boardId, listId });
-
-//     if (list == null) {
-//       res.status(404).end();
-//       return;
-//     }
-
-//     res.status(200).json({ data: list });
-//     return;
-//   };
-
-//   updateList: Controller = async (req, res) => {
-//     const memberId = res.locals.user.id;
-//     const { name, description, listId, boardId } = req.body;
-
-//     const list = await listService.updateList({
-//       boardId,
-//       listId,
-//       description,
-//       name,
-//       memberId,
-//     });
-
-//     res.status(200).json({ data: list });
-//     return;
-//   };
-
-//   deleteList: Controller = async (req, res) => {
-//     const memberId = res.locals.user.id;
-//     const { listId, boardId } = req.body;
-
-//     await listService.deleteList(boardId, listId, memberId);
-
-//     res.status(204).end();
-//     return;
-//   };
-// }
-
-// export default new ListController();
