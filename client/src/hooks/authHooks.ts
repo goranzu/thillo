@@ -41,7 +41,7 @@ function useSignup() {
 
 function useSignin() {
   const navigate = useNavigate();
-  //   const { updateAuthState } = useAuth();
+  const { updateAuthState } = useAuth();
   return useMutation<
     AxiosResponse<SignResponse>,
     AxiosError<ErrorResponse>,
@@ -50,7 +50,7 @@ function useSignin() {
     onSuccess: (response) => {
       const { data } = response.data;
       console.log(data);
-      //   updateAuthState(data.id, data.email);
+      updateAuthState(data.id, data.email);
       setTimeout(() => {
         navigate("/dashboard");
       }, 1000);
@@ -75,20 +75,26 @@ function useResetPassword() {
     AxiosResponse<null>,
     AxiosError<ErrorResponse>,
     { password: string; token: string }
-  >((data) => apiClient.post(`/reset-password`, data), {
-    onSuccess: () => {
-      alert("Password reset. You can login with your new password");
+  >(
+    (data) =>
+      apiClient.post(`/reset-password/${data.token}`, {
+        password: data.password,
+      }),
+    {
+      onSuccess: () => {
+        alert("Password reset. You can login with your new password");
+      },
+      onError: (error) => {
+        if (
+          !!error.response?.data.errors.find(
+            (err: Error) => err.param === "token",
+          )
+        ) {
+          alert("Invalid Token.");
+        }
+      },
     },
-    onError: (error) => {
-      if (
-        !!error.response?.data.errors.find(
-          (err: Error) => err.param === "token",
-        )
-      ) {
-        alert("Invalid Token.");
-      }
-    },
-  });
+  );
 }
 
 export { useSignup, useSignin, useForgotPassword, useResetPassword };

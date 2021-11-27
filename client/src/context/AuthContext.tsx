@@ -37,13 +37,15 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
   });
   const [status, setStatus] = useState<
     "idle" | "loading" | "rejected" | "resolved"
-  >("idle");
+  >("loading");
   const navigate = useNavigate();
 
   const isLoading = status === "loading";
   const isError = status === "rejected";
   const isResolved = status === "resolved";
   const isIdle = status === "idle";
+
+  console.log(status);
 
   async function logout() {
     try {
@@ -61,7 +63,7 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
     (async function () {
       try {
         setStatus("loading");
-        const { data } = await apiClient.get<MeResponse>(`/auth/me`);
+        const { data } = await apiClient.get<MeResponse>(`/me`);
         setAuthState({
           isAuthenticated: true,
           userInfo: { ...data.data },
@@ -94,7 +96,7 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
         isResolved,
       }}
     >
-      {children}
+      {isLoading ? <p>Loading...</p> : children}
     </AuthContext.Provider>
   );
 }
