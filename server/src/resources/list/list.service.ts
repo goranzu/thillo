@@ -1,6 +1,6 @@
 import * as boardService from "../board/board.service";
-import { NotFoundError } from "../common/errors";
-import { FindList } from "../common/types";
+import { NotFoundError } from "../../common/errors";
+import { FindList } from "../../common/types";
 import * as listDao from "./list.dao";
 
 export interface CreateListDto {

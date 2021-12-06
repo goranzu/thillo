@@ -1,6 +1,6 @@
 import express from "express";
 import { query, param, body } from "express-validator";
-import * as validationMiddleware from "../common/middleware/validation.middleware";
+import * as validationMiddleware from "../../common/middleware/validation.middleware";
 
 import * as listController from "./list.controller";
 

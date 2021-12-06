@@ -1,9 +1,9 @@
 import express from "express";
 import { body } from "express-validator";
-import * as validationMiddleware from "../common/middleware/validation.middleware";
+import * as validationMiddleware from "../../common/middleware/validation.middleware";
 import * as boardController from "./board.controller";
-import * as commonMiddleware from "../common/middleware/common.middleware";
-import { boardId, listId, memberId } from "../common/constants";
+import * as commonMiddleware from "../../common/middleware/common.middleware";
+import { boardId, listId, memberId } from "../../common/constants";
 
 const router = express.Router();
 

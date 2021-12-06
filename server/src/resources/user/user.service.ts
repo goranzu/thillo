@@ -1,14 +1,14 @@
-import appConfig from "../config";
-import { BadUserInputError, NotFoundError } from "../common/errors";
-import { hashPassword, verifyPassword } from "../common/password";
+import appConfig from "../../config";
+import { BadUserInputError, NotFoundError } from "../../common/errors";
+import { hashPassword, verifyPassword } from "../../common/password";
 import { CreateDto } from "./dto/create.dto";
 // import * as userDao from "./user.dao";
 import userDao from "./user.dao";
-import prefixes from "../common/prefixes";
-import redisClient from "../common/redisClient";
-import * as emailService from "../common/services/email.service";
-import { User, UserWithoutPassword } from "../common/types";
-import { generateToken } from "../common/generateToken";
+import prefixes from "../../common/prefixes";
+import redisClient from "../../common/redisClient";
+import * as emailService from "../../common/services/email.service";
+import { User, UserWithoutPassword } from "../../common/types";
+import { generateToken } from "../../common/generateToken";
 
 async function signUp(
   data: CreateDto,

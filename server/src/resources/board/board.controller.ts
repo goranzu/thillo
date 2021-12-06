@@ -1,6 +1,6 @@
 import * as listService from "../list/list.service";
-import { BadUserInputError } from "../common/errors";
-import { Controller } from "../common/types";
+import { BadUserInputError } from "../../common/errors";
+import { Controller } from "../../common/types";
 import * as boardService from "./board.service";
 
 const list: Controller = async (req, res) => {

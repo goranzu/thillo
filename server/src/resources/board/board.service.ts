@@ -1,4 +1,4 @@
-import { NotFoundError, UnauthorizedError } from "../common/errors";
+import { NotFoundError, UnauthorizedError } from "../../common/errors";
 import * as listService from "../list/list.service";
 import * as userSevice from "../user/user.service";
 import * as boardDao from "./board.dao";

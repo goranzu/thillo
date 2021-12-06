@@ -1,4 +1,4 @@
-import { Controller } from "../common/types";
+import { Controller } from "../../common/types";
 import * as listService from "./list.service";
 
 const createList: Controller = async (req, res): Promise<void> => {

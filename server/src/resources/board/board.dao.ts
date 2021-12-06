@@ -1,5 +1,5 @@
-import { buildUpdateQuery } from "../common/utils";
-import pool from "../db/pool";
+import { buildUpdateQuery } from "../../common/utils";
+import pool from "../../db/pool";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
 import BoardModel from "./board.model";
 import UserModel from "../user/user.model";

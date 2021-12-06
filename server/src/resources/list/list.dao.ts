@@ -1,5 +1,5 @@
-import { FindList } from "../common/types";
-import pool from "../db/pool";
+import { FindList } from "../../common/types";
+import pool from "../../db/pool";
 import { CreateListDto, PatchListDto } from "./list.service";
 
 interface List {

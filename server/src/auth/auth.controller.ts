@@ -1,5 +1,5 @@
 import debug from "debug";
-import * as userService from "../user/user.service";
+import * as userService from "../resources/user/user.service";
 import appConfig from "../config";
 import { Controller } from "../common/types";
 

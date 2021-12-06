@@ -1,4 +1,4 @@
-import { Controller } from "../common/types";
+import { Controller } from "../../common/types";
 import * as userService from "./user.service";
 
 const findByEmail: Controller = async (req, res) => {
