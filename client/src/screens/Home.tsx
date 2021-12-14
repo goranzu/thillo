@@ -1,7 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
+import { Link } from "react-router-dom";
 import * as styleVariables from "../styles/variables";
 import * as mq from "../styles/mq";
+import * as colors from "../styles/colors";
 import { ReactComponent as Logo } from "../images/logo.svg";
 import { ReactComponent as Illustration } from "../images/landing-page-illustration.svg";
 import ButtonLink from "../components/styled/ButtonLink.styled";
@@ -25,7 +27,7 @@ function Home() {
       <header
         css={{
           padding: `1.25rem ${styleVariables.globalPadding}`,
-          boxShadow: styleVariables.boxShadow,
+          borderBottom: "thin solid hsl(0, 0%, 90%);",
         }}
       >
         <div
@@ -55,14 +57,22 @@ function Home() {
           >
             {nav.map((item) => {
               return (
-                <ButtonLink
-                  css={{ textDecoration: "none" }}
-                  key={item.name}
+                <Link
+                  key={item.path}
+                  css={{
+                    textDecoration: "none",
+                    color:
+                      item.path === "/register" ? colors.primary : "inherit",
+                    fontSize: "1.125rem",
+                    fontWeight: 600,
+                    ":hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
                   to={item.path}
-                  variant={item.variant}
                 >
                   {item.name}
-                </ButtonLink>
+                </Link>
               );
             })}
           </nav>
