@@ -5,14 +5,14 @@ import { PoolConfig } from "pg";
 
 const ENV = process.env.NODE_ENV || "development";
 
-const { PGDATABASE, PGUSER, PGHOST, PGPASSWORD, PGPORT, SESSION_SECRET } =
+const { PG_DATABASE, PG_USER, PG_HOST, PG_PASSWORD, PG_PORT, SESSION_SECRET } =
   process.env;
 
-assert(PGDATABASE, "env variable PGDATABASE must be defined");
-assert(PGUSER, "env variable PGUSER must be defined");
-assert(PGHOST, "env variable PGHOST must be defined");
-assert(PGPASSWORD, "env variable PGPASSWORD must be defined");
-assert(PGPORT, "env variable PGPORT must be defined");
+assert(PG_DATABASE, "env variable PGDATABASE must be defined");
+assert(PG_USER, "env variable PGUSER must be defined");
+assert(PG_HOST, "env variable PGHOST must be defined");
+assert(PG_PASSWORD, "env variable PGPASSWORD must be defined");
+assert(PG_PORT, "env variable PGPORT must be defined");
 assert(SESSION_SECRET, "env variable SESSION_SECRET must be defined");
 
 const appConfig = {
@@ -24,11 +24,11 @@ const appConfig = {
   frontend: "http://localhost:8080",
   //   redisPort: ENV === "test" ? 6380 : 6379,
   sql: {
-    database: PGDATABASE,
-    user: PGUSER,
-    host: PGHOST,
-    password: PGPASSWORD,
-    port: Number(PGPORT),
+    database: PG_DATABASE,
+    user: PG_USER,
+    host: PG_HOST,
+    password: PG_PASSWORD,
+    port: Number(PG_PORT),
   } as PoolConfig,
 } as const;
 
