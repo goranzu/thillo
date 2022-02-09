@@ -17,10 +17,27 @@ export interface Board {
 - Boards may only be accessed by the creator of the board or members of the board
 */
 async function list(userId: number): Promise<BoardModel[] | undefined> {
+  // This function should list the boards the user has created and is a member of.
+  /*
+        select *
+        from boards b
+        where creator_id = $1
+        and b.board_id in (
+            select board_id
+            from board_members
+            where member_id = $1
+        );
+    */
   const boards = await BoardModel.query()
     .select("*")
     .where("creator_id", "=", userId)
-    .orderBy("created_at", "DESC");
+    .where(
+      "board_id",
+      "in",
+      BoardModel.knexQuery()
+        .from("board_members")
+        .where("member_id", "=", userId),
+    );
   return boards;
 }
 
@@ -34,29 +51,13 @@ async function create(data: CreateBoardDto): Promise<BoardModel> {
   return board;
 }
 
-async function findBoardByMemberId(
-  creatorId: number,
-  boardId: number,
-): Promise<BoardModel[]> {
-  //   Finds board if logged in user is the creator or a member
-  const boards = await UserModel.relatedQuery<BoardModel>("boards")
-    .for(creatorId)
-    .orderBy("created_at");
-
-  return boards;
-}
-
 async function update(
   data: UpdateBoardDto,
   conditions: { id: number; creatorId: number },
 ): Promise<Board | undefined> {
   // Filter out null of undefined
-
-  const q = buildUpdateQuery(data, conditions);
-
-  const board = await pool.query((q.query += " RETURNING *"), q.values);
-
-  return board?.rows[0];
+  //   Should update the board details: name, description, isPrivate
+  const updatedBoard = await BoardModel.query().patch();
 }
 
 async function deleteBoard(
@@ -147,7 +148,6 @@ async function findMember(
 export {
   list,
   create,
-  findBoardByMemberId,
   update,
   deleteBoard,
   addMember,
