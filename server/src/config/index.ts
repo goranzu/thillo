@@ -1,7 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 import assert from "assert";
-import { PoolConfig } from "pg";
 
 const ENV = process.env.NODE_ENV || "development";
 
@@ -29,7 +27,7 @@ const appConfig = {
     host: PG_HOST,
     password: PG_PASSWORD,
     port: Number(PG_PORT),
-  } as PoolConfig,
+  },
 } as const;
 
 export default appConfig;

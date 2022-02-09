@@ -1,12 +1,14 @@
 // Update with your config settings.
+import type { Knex } from "knex";
+import appConfig from "./src/config";
 
-export default {
+const config: { [key: string]: Knex.Config } = {
   development: {
     client: "postgresql",
     connection: {
-      database: "thillo_dev",
-      user: "postgres",
-      password: "reacter",
+      database: appConfig.sql.database,
+      user: appConfig.sql.user,
+      password: appConfig.sql.password,
     },
     pool: {
       min: 2,
@@ -14,6 +16,10 @@ export default {
     },
     migrations: {
       directory: "db/migrations",
+      tableName: "migrations",
+    },
+    seeds: {
+      directory: "db/seeds",
     },
   },
 
@@ -49,3 +55,5 @@ export default {
   // },
   //   },
 };
+
+module.exports = config;
