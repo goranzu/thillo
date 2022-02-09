@@ -1,5 +1,4 @@
 import { buildUpdateQuery } from "../../common/utils";
-import pool from "../../db/pool";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
 import BoardModel from "./board.model";
 import UserModel from "../user/user.model";
@@ -14,6 +13,9 @@ export interface Board {
   updatedAt?: string;
 }
 
+/* TODO:
+- Boards may only be accessed by the creator of the board or members of the board
+*/
 async function list(userId: number): Promise<BoardModel[] | undefined> {
   const boards = await BoardModel.query()
     .select("*")
