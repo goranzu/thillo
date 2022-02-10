@@ -1,4 +1,4 @@
-import pool from "../../db/pool";
+import CardModel from "./card.model";
 
 interface CreateCardDto {
   title: string;
@@ -10,27 +10,53 @@ interface CreateCardDto {
 
 interface Card extends Omit<CreateCardDto, "attachment"> {}
 
-async function create(data: CreateCardDto): Promise<Card | undefined> {
-  const createdCard = await pool.query(
-    `
-        INSERT INTO cards (title, description, "listId", "creatorId")
-        VALUES ($1, $2, $3, $4)
-        RETURNING *;
-    `,
-    [data.title, data.description, data.listId, data.creatorId],
-  );
+async function create(data: CreateCardDto): Promise<CardModel> {
+  const card = await CardModel.query()
+    .insert({
+      title: data.title,
+      description: data.description,
+      list_id: data.listId,
+      creator_id: data.creatorId,
+    })
+    .returning("*");
 
-  if (data.attachment) {
-    await pool.query(
-      `
-        INSERT INTO "cardAttachments" (url, "cardId")
-        VALUES ($1, $2);
-      `,
-      [data.attachment, createdCard?.rows[0].id],
-    );
-  }
-
-  return createdCard?.rows[0];
+  return card;
 }
 
-export { create };
+async function deleteCard(
+  userId: number,
+  cardId: number,
+  boardId: number,
+): Promise<any> {
+  // Only user that is a member of the board can delete a card
+  /*
+    delete from cards
+    where card_id = $card_id
+    and $userId in (
+        select member_id
+        from board_members
+        where board_id = $boardId
+        union is not necassary because creators of boards are also members
+        union
+        select creator_id
+        from boards
+        where board_id = $board_id
+    )
+  */
+  const res = await CardModel.query()
+    .delete()
+    .where("card_id", "=", cardId)
+    .andWhere(
+      `${userId}`,
+      "in",
+      CardModel.knexQuery()
+        .select("member_id")
+        .from("board_members")
+        .where("board_id", "=", boardId),
+    );
+
+  console.log(res);
+  return res;
+}
+
+export { create, deleteCard };
