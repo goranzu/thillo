@@ -40,11 +40,15 @@ async function list(userId: number): Promise<BoardModel[] | undefined> {
 }
 
 async function create(data: CreateBoardDto): Promise<BoardModel> {
+  // When creating a board you also become a member of a board
   const board = await BoardModel.query().insert({
     name: data.name,
     description: data.description,
     creator_id: data.creatorId,
   });
+
+  //   Insert into the join table board_members
+  await board.$relatedQuery("members").insert({ member_id: data.creatorId });
 
   return board;
 }
