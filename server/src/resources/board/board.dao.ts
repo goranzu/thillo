@@ -1,7 +1,5 @@
-import { buildUpdateQuery } from "../../common/utils";
 import { CreateBoardDto, UpdateBoardDto } from "./board.service";
 import BoardModel from "./board.model";
-import UserModel from "../user/user.model";
 
 export interface Board {
   id: number;
@@ -31,9 +29,9 @@ async function list(userId: number): Promise<BoardModel[] | undefined> {
   const boards = await BoardModel.query()
     .select("*")
     .where("creator_id", "=", userId)
-    .where(
+    .whereIn(
       "board_id",
-      "in",
+      //   Select all the board_id's that user is member of
       BoardModel.knexQuery()
         .from("board_members")
         .where("member_id", "=", userId),
@@ -54,104 +52,73 @@ async function create(data: CreateBoardDto): Promise<BoardModel> {
 async function update(
   data: UpdateBoardDto,
   conditions: { id: number; creatorId: number },
-): Promise<Board | undefined> {
+): Promise<BoardModel | null> {
   // Filter out null of undefined
   //   Should update the board details: name, description, isPrivate
-  const updatedBoard = await BoardModel.query().patch();
+  //   Only the creator of the board can update the board details
+  const board = await BoardModel.query().findOne({
+    board_id: conditions.id,
+    creator_id: conditions.creatorId,
+  });
+
+  if (!board) {
+    return null;
+  }
+
+  //   Update the board with details
+  const updatedBoard = await board.$query().patchAndFetch({
+    name: data.name,
+    description: data.description,
+    is_private: data.isPrivate,
+  });
+
+  return updatedBoard;
 }
 
 async function deleteBoard(
   boardId: number,
   creatorId: number,
-): Promise<boolean> {
-  const result = await pool.query(
-    `
-        DELETE FROM boards
-        WHERE id = $1 AND "creatorId" = $2;
-    `,
-    [boardId, creatorId],
-  );
-  console.log(result);
-
-  return true;
-}
-
-async function findBoardCreator(
-  boardId: number,
-  creatorId: number,
-): Promise<boolean> {
-  const check = await pool.query(
-    `
-        SELECT id
-        FROM boards
-        WHERE id = $1 AND "creatorId" = $2
-    `,
-    [boardId, creatorId],
-  );
-
-  if (check?.rowCount && check.rowCount > 0) {
-    return true;
-  } else {
-    return false;
-  }
+): Promise<number> {
+  // When a board is deleted cascading rules should remove related content.
+  // Only the creator of the board can delete a board
+  const result = await BoardModel.query()
+    .delete()
+    .where({ creator_id: creatorId, board_id: boardId });
+  return result;
 }
 
 async function addMember(
   boardId: number,
   newMemberId: number,
-): Promise<Board | undefined> {
-  const board = await pool.query(
-    `
-        INSERT INTO "boardMembers" ("memberId", "boardId")
-        VALUES ($1, $2)
-        RETURNING *;
-    `,
-    [newMemberId, boardId],
-  );
-  console.log(board);
-  return board?.rows[0];
+): Promise<Board | undefined | any> {
+  // make the connection in the board_members table
+  const result = await BoardModel.relatedQuery("members")
+    .for(boardId)
+    .insert({ member_id: newMemberId });
+
+  console.log(result);
+  return result;
 }
 
 async function removeMember(
   boardId: number,
+  creatorId: number,
   memberId: number,
-): Promise<Board | undefined> {
+): Promise<Board | undefined | any> {
   //   The logged in user is able to add members to a board only if this user als is the creator of the board
-  const result = await pool.query(
-    `
-        DELETE FROM "boardMembers"
-        WHERE "memberId" = $1 AND "boardId" = $2
-        RETURNING *;
-  `,
-    [memberId, boardId],
-  );
+  //   Find the board, if board exists remove the member from the board
+  const board = await BoardModel.query().findOne({
+    board_id: boardId,
+    creator_id: creatorId,
+  });
+  //   remove the join table entry
+  const res = await board
+    ?.$relatedQuery("members")
+    .delete()
+    .where("member_id", "=", memberId);
 
-  console.log(result);
-  return result?.rows[0];
+  console.log(res);
+  return res;
 }
 
-async function findMember(
-  memberId: number,
-  boardId: number,
-): Promise<number | undefined> {
-  const mem = await pool.query(
-    `
-        SELECT "memberId"
-        FROM "boardMembers"
-        WHERE "boardId" = $1 AND "memberId" = $2
-    `,
-    [boardId, memberId],
-  );
-  return mem?.rows[0];
-}
-
-export {
-  list,
-  create,
-  update,
-  deleteBoard,
-  addMember,
-  removeMember,
-  findMember,
-  findBoardCreator,
-};
+export { list, create, update, deleteBoard, addMember, removeMember };
