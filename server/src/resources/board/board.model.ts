@@ -34,6 +34,18 @@ export default class BoardModel extends Model {
         to: "lists.board_id",
       },
     },
+    members: {
+      relation: Model.ManyToManyRelation,
+      modelClass: UserModel,
+      join: {
+        from: "boards.board_id",
+        through: {
+          from: "board_members.board_id",
+          to: "board_members.member_id",
+        },
+        to: "users.user_id",
+      },
+    },
   };
 
   static jsonSchema = {

@@ -29,13 +29,25 @@ export default class UserModel extends Model {
         from: "users.user_id",
         to: "boards.creator_id",
       },
-      lists: {
-        relation: Model.HasManyRelation,
-        modelClass: ListModel,
-        join: {
-          from: "users.user_id",
-          to: "lists.creator_id",
+    },
+    lists: {
+      relation: Model.HasManyRelation,
+      modelClass: ListModel,
+      join: {
+        from: "users.user_id",
+        to: "lists.creator_id",
+      },
+    },
+    memberships: {
+      relation: Model.ManyToManyRelation,
+      modelClass: BoardModel,
+      join: {
+        from: "users.user_id",
+        through: {
+          from: "board_members.member_id",
+          to: "board_members.board_id",
         },
+        to: "boards.board_id",
       },
     },
   };
